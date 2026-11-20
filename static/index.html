@@ -1,0 +1,263 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>FaceVerify — Sistem Verifikasi Wajah</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:        #0a0f1e;
+  --surface:   #111827;
+  --card:      #1a2235;
+  --border:    #2a3448;
+  --accent:    #3b82f6;
+  --accent2:   #60a5fa;
+  --success:   #10b981;
+  --warn:      #f59e0b;
+  --danger:    #ef4444;
+  --text:      #e2e8f0;
+  --muted:     #94a3b8;
+  --radius:    14px;
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg: #f0f4ff; --surface: #fff; --card: #fff;
+    --border: #dde3f0; --text: #1e293b; --muted: #64748b;
+    color-scheme: light;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{
+  font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);
+  min-height:100vh;line-height:1.5;
+  padding:0 max(16px,env(safe-area-inset-left,0px));
+}
+/* NAV */
+nav{
+  display:flex;align-items:center;justify-content:space-between;
+  padding:1rem max(24px,env(safe-area-inset-left,0px));
+  background:var(--surface);border-bottom:1px solid var(--border);
+  position:sticky;top:0;z-index:10;
+}
+.logo{font-weight:800;font-size:1.25rem;color:var(--accent);letter-spacing:-0.5px}
+.logo span{color:var(--text)}
+nav a{
+  color:var(--muted);text-decoration:none;font-size:.875rem;font-weight:500;
+  padding:.4rem .8rem;border-radius:8px;transition:background .2s,color .2s;
+}
+nav a:hover{background:var(--card);color:var(--text)}
+/* HERO */
+.hero{
+  max-width:860px;margin:0 auto;
+  padding:5rem 0 4rem;text-align:center;
+}
+.badge{
+  display:inline-flex;align-items:center;gap:.4rem;
+  background:rgba(59,130,246,.12);color:var(--accent2);
+  font-size:.8rem;font-weight:600;letter-spacing:.04em;text-transform:uppercase;
+  padding:.35rem .9rem;border-radius:999px;margin-bottom:1.5rem;
+  border:1px solid rgba(59,130,246,.2);
+}
+.badge::before{content:'';width:6px;height:6px;border-radius:50%;background:var(--accent);
+  animation:pulse 1.5s infinite}
+@keyframes pulse{0%,100%{opacity:1}50%{opacity:.4}}
+h1{
+  font-size:clamp(2rem,5vw,3.5rem);font-weight:800;line-height:1.1;
+  letter-spacing:-1.5px;margin-bottom:1.25rem;text-wrap:balance;
+}
+h1 span{
+  background:linear-gradient(135deg,var(--accent),var(--accent2));
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+}
+.subtitle{
+  font-size:1.1rem;color:var(--muted);max-width:520px;
+  margin:0 auto 2.5rem;line-height:1.7;
+}
+.cta-group{
+  display:flex;gap:1rem;justify-content:center;flex-wrap:wrap;
+}
+.btn{
+  display:inline-flex;align-items:center;gap:.5rem;
+  padding:.85rem 2rem;border-radius:12px;font-weight:600;
+  font-size:1rem;text-decoration:none;transition:all .2s;
+  border:none;cursor:pointer;font-family:inherit;
+}
+.btn-primary{
+  background:var(--accent);color:#fff;
+  box-shadow:0 4px 20px rgba(59,130,246,.35);
+}
+.btn-primary:hover{background:#2563eb;transform:translateY(-1px);
+  box-shadow:0 6px 24px rgba(59,130,246,.45)}
+.btn-outline{
+  background:transparent;color:var(--text);
+  border:1.5px solid var(--border);
+}
+.btn-outline:hover{background:var(--card);border-color:var(--accent)}
+/* FEATURES */
+.features{
+  max-width:1000px;margin:0 auto 5rem;
+  display:grid;grid-template-columns:repeat(auto-fit,minmax(220px,1fr));gap:1.25rem;
+}
+.feat{
+  background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.5rem;transition:border-color .2s;
+}
+.feat:hover{border-color:var(--accent)}
+.feat-icon{
+  width:44px;height:44px;border-radius:10px;
+  background:rgba(59,130,246,.12);
+  display:flex;align-items:center;justify-content:center;
+  font-size:1.3rem;margin-bottom:1rem;
+}
+.feat h3{font-size:.95rem;font-weight:600;margin-bottom:.4rem}
+.feat p{font-size:.85rem;color:var(--muted);line-height:1.6}
+/* MODELS INFO */
+.models{
+  max-width:860px;margin:0 auto 5rem;
+  background:var(--card);border:1px solid var(--border);
+  border-radius:var(--radius);padding:2rem;
+}
+.models h2{font-size:1.1rem;font-weight:700;margin-bottom:1.25rem}
+.model-row{
+  display:flex;align-items:center;gap:1rem;padding:.75rem 0;
+  border-bottom:1px solid var(--border);
+}
+.model-row:last-child{border-bottom:none}
+.model-tag{
+  background:rgba(16,185,129,.12);color:var(--success);
+  font-size:.75rem;font-weight:700;padding:.2rem .6rem;border-radius:6px;
+  white-space:nowrap;
+}
+.model-name{font-weight:600;font-size:.9rem}
+.model-desc{font-size:.8rem;color:var(--muted)}
+/* STATS */
+.stats{
+  display:flex;gap:2rem;justify-content:center;flex-wrap:wrap;
+  max-width:700px;margin:0 auto 4rem;
+}
+.stat{text-align:center}
+.stat-num{font-size:2rem;font-weight:800;color:var(--accent)}
+.stat-lbl{font-size:.8rem;color:var(--muted);margin-top:.2rem}
+/* FOOTER */
+footer{
+  text-align:center;padding:2rem;color:var(--muted);font-size:.8rem;
+  border-top:1px solid var(--border);
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <div class="logo">Face<span>Verify</span></div>
+  <div style="display:flex;gap:.25rem">
+    <a href="/register.html">Daftarkan Wajah</a>
+    <a href="/verify.html">Verifikasi</a>
+    <a href="/admin.html">Admin</a>
+  </div>
+</nav>
+
+<div class="hero">
+  <div class="badge">🔒 Sistem KYC Berbasis AI</div>
+  <h1>Verifikasi Wajah <span>Setara Perbankan</span></h1>
+  <p class="subtitle">
+    Sistem deteksi dan verifikasi wajah dengan ArcFace + anti-spoofing multi-layer.
+    Mencegah verifikasi menggunakan foto, video layar, atau gambar yang dicetak.
+  </p>
+  <div class="cta-group">
+    <a href="/register.html" class="btn btn-primary">📷 Daftarkan Wajah</a>
+    <a href="/verify.html" class="btn btn-outline">✅ Verifikasi Identitas</a>
+  </div>
+</div>
+
+<div class="stats">
+  <div class="stat">
+    <div class="stat-num">99.4%</div>
+    <div class="stat-lbl">Akurasi ArcFace (LFW benchmark)</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">5</div>
+    <div class="stat-lbl">Teknik anti-spoofing berlapis</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">&lt;1s</div>
+    <div class="stat-lbl">Waktu verifikasi</div>
+  </div>
+  <div class="stat">
+    <div class="stat-num">512D</div>
+    <div class="stat-lbl">Face embedding ArcFace</div>
+  </div>
+</div>
+
+<div class="features">
+  <div class="feat">
+    <div class="feat-icon">🎯</div>
+    <h3>Deteksi Wajah RetinaFace</h3>
+    <p>Model RetinaFace mendeteksi wajah akurat meski miring, jauh, atau cahaya kurang.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">🧬</div>
+    <h3>ArcFace Recognition</h3>
+    <p>Embedding 512 dimensi dari ArcFace — model yang sama dipakai bank dan e-wallet besar.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">🛡️</div>
+    <h3>Anti-Spoofing Multi-Layer</h3>
+    <p>FFT Moire + LBP Texture + Color Analysis — cegah verifikasi dengan foto/layar/print.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">👁️</div>
+    <h3>Active Liveness</h3>
+    <p>Deteksi gerakan wajah dari multi-frame untuk memastikan subjek adalah orang hidup.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">🔍</div>
+    <h3>1:1 Verifikasi</h3>
+    <p>Bandingkan wajah dengan user terdaftar berdasarkan ID — untuk login/autentikasi.</p>
+  </div>
+  <div class="feat">
+    <div class="feat-icon">👥</div>
+    <h3>1:N Identifikasi</h3>
+    <p>Cari wajah dari seluruh database — cocok untuk absensi atau akses kontrol.</p>
+  </div>
+</div>
+
+<div class="models">
+  <h2>Model yang Digunakan</h2>
+  <div class="model-row">
+    <div class="model-tag">DETEKSI</div>
+    <div>
+      <div class="model-name">RetinaFace (via InsightFace)</div>
+      <div class="model-desc">Deteksi wajah + 5-point landmark — state-of-the-art, akurasi 97%+</div>
+    </div>
+  </div>
+  <div class="model-row">
+    <div class="model-tag">RECOGNITION</div>
+    <div>
+      <div class="model-name">ArcFace buffalo_l (ViT-B/16 backbone)</div>
+      <div class="model-desc">Face recognition 512D embedding — 99.4% di LFW benchmark, setara Veriff/Jumio</div>
+    </div>
+  </div>
+  <div class="model-row">
+    <div class="model-tag">ANTI-SPOOF</div>
+    <div>
+      <div class="model-name">Multi-technique CV Analysis</div>
+      <div class="model-desc">FFT Moire + LBP Texture + HSV Color + Quality + Gradient Distribution</div>
+    </div>
+  </div>
+  <div class="model-row" style="opacity:.6">
+    <div class="model-tag" style="background:rgba(245,158,11,.12);color:var(--warn)">OPSIONAL</div>
+    <div>
+      <div class="model-name">Silent-Face Anti-Spoofing (MinivisionAI)</div>
+      <div class="model-desc">Model deep learning khusus anti-spoof — rekomendasi untuk level keamanan perbankan</div>
+    </div>
+  </div>
+</div>
+
+<footer>
+  Face Verification System &nbsp;|&nbsp; Powered by InsightFace (ArcFace + RetinaFace) &nbsp;|&nbsp;
+  Anti-spoofing: FFT + LBP + HSV + Multi-frame liveness
+</footer>
+
+</body>
+</html>

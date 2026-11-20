@@ -1,0 +1,254 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Admin Dashboard — FaceVerify</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<style>
+:root{
+  --bg:#0a0f1e;--surface:#111827;--card:#1a2235;--border:#2a3448;
+  --accent:#3b82f6;--success:#10b981;--danger:#ef4444;--warn:#f59e0b;
+  --text:#e2e8f0;--muted:#94a3b8;--radius:14px;color-scheme:dark;
+}
+@media(prefers-color-scheme:light){
+  :root:not([data-theme="dark"]){
+    --bg:#f0f4ff;--surface:#fff;--card:#fff;--border:#dde3f0;
+    --text:#1e293b;--muted:#64748b;color-scheme:light;
+  }
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Inter',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;
+  padding:0 max(16px,env(safe-area-inset-left,0px))}
+nav{display:flex;align-items:center;justify-content:space-between;
+  padding:1rem max(24px,env(safe-area-inset-left,0px));
+  background:var(--surface);border-bottom:1px solid var(--border)}
+.logo{font-weight:800;font-size:1.1rem;color:var(--accent);text-decoration:none}
+.logo span{color:var(--text)}
+nav a:not(.logo){color:var(--muted);text-decoration:none;font-size:.85rem;
+  padding:.35rem .7rem;border-radius:8px}
+nav a:not(.logo):hover{background:var(--card);color:var(--text)}
+.wrap{max-width:1100px;margin:0 auto;padding:2rem 0 4rem}
+h1{font-size:1.5rem;font-weight:800;margin-bottom:1.5rem}
+
+/* STATS */
+.stats{display:grid;grid-template-columns:repeat(auto-fit,minmax(160px,1fr));gap:1rem;margin-bottom:2rem}
+.stat{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);
+  padding:1.25rem;text-align:center}
+.stat-num{font-size:2rem;font-weight:800;color:var(--accent)}
+.stat-lbl{font-size:.78rem;color:var(--muted);margin-top:.2rem}
+
+/* USERS TABLE */
+.card{background:var(--card);border:1px solid var(--border);border-radius:var(--radius);padding:1.5rem;margin-bottom:1.5rem}
+.card h2{font-size:1.1rem;font-weight:700;margin-bottom:1.25rem;
+  display:flex;align-items:center;justify-content:space-between}
+.btn-sm{
+  padding:.4rem .9rem;border-radius:8px;font-size:.8rem;font-weight:600;
+  cursor:pointer;border:none;font-family:'Inter',sans-serif;transition:all .2s;
+}
+.btn-primary-sm{background:var(--accent);color:#fff}
+.btn-danger-sm{background:var(--danger);color:#fff}
+.btn-refresh{background:var(--card);color:var(--muted);border:1px solid var(--border)}
+.btn-refresh:hover{border-color:var(--accent);color:var(--accent)}
+
+table{width:100%;border-collapse:collapse;font-size:.85rem}
+thead th{font-size:.75rem;text-transform:uppercase;letter-spacing:.06em;
+  color:var(--muted);padding:.5rem .75rem;text-align:left;
+  border-bottom:1px solid var(--border)}
+tbody tr{border-bottom:1px solid var(--border);transition:background .15s}
+tbody tr:hover{background:rgba(255,255,255,.03)}
+td{padding:.7rem .75rem;vertical-align:middle}
+.user-name{font-weight:600}
+.user-id{font-family:monospace;font-size:.8rem;color:var(--muted)}
+.chip{
+  display:inline-block;padding:.2rem .6rem;border-radius:999px;
+  font-size:.72rem;font-weight:700;
+}
+.chip-ok{background:rgba(16,185,129,.12);color:var(--success)}
+.chip-fail{background:rgba(239,68,68,.12);color:var(--danger)}
+.chip-warn{background:rgba(245,158,11,.12);color:var(--warn)}
+.chip-info{background:rgba(59,130,246,.12);color:var(--accent)}
+
+/* LOGS */
+.log-row{font-family:monospace;font-size:.78rem;color:var(--muted);
+  padding:.5rem .75rem;border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:140px 60px 100px 80px 80px 1fr;gap:.5rem;align-items:center}
+.log-row:hover{background:rgba(255,255,255,.02)}
+.log-head{font-family:'Inter',sans-serif;font-weight:700;font-size:.72rem;
+  text-transform:uppercase;letter-spacing:.05em;color:var(--muted);
+  padding:.4rem .75rem;border-bottom:1px solid var(--border);
+  display:grid;grid-template-columns:140px 60px 100px 80px 80px 1fr;gap:.5rem}
+@media(max-width:700px){
+  .log-row,.log-head{grid-template-columns:1fr;gap:.2rem}
+}
+</style>
+</head>
+<body>
+
+<nav>
+  <a href="/" class="logo">Face<span>Verify</span></a>
+  <div style="display:flex;gap:.25rem">
+    <a href="/register.html">Daftar</a>
+    <a href="/verify.html">Verifikasi</a>
+  </div>
+</nav>
+
+<div class="wrap">
+  <h1>🛡️ Admin Dashboard</h1>
+
+  <!-- STATS -->
+  <div class="stats" id="statsGrid">
+    <div class="stat"><div class="stat-num" id="statUsers">—</div><div class="stat-lbl">Total Pengguna</div></div>
+    <div class="stat"><div class="stat-num" id="statVerified">—</div><div class="stat-lbl">Verifikasi Sukses</div></div>
+    <div class="stat"><div class="stat-num" id="statFailed">—</div><div class="stat-lbl">Verifikasi Gagal</div></div>
+    <div class="stat"><div class="stat-num" id="statSpoofs">—</div><div class="stat-lbl">Spoof Terdeteksi</div></div>
+  </div>
+
+  <!-- USERS -->
+  <div class="card">
+    <h2>
+      Pengguna Terdaftar
+      <button class="btn-sm btn-refresh" onclick="loadUsers()">↻ Refresh</button>
+    </h2>
+    <div style="overflow-x:auto">
+      <table id="usersTable">
+        <thead>
+          <tr>
+            <th>ID</th><th>Nama</th><th>Email</th><th>HP</th>
+            <th>Didaftarkan</th><th>Aksi</th>
+          </tr>
+        </thead>
+        <tbody id="usersBody">
+          <tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">
+            Memuat data...</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- LOGS -->
+  <div class="card">
+    <h2>
+      Log Aktivitas
+      <button class="btn-sm btn-refresh" onclick="loadLogs()">↻ Refresh</button>
+    </h2>
+    <div class="log-head">
+      <span>Waktu</span><span>Aksi</span><span>User ID</span>
+      <span>Similarity</span><span>Liveness</span><span>Hasil</span>
+    </div>
+    <div id="logsBody">
+      <div style="text-align:center;color:var(--muted);padding:2rem;font-size:.85rem">Memuat log...</div>
+    </div>
+  </div>
+</div>
+
+<script>
+const API = '';
+
+async function loadUsers() {
+  try {
+    const r = await fetch(API + '/api/users');
+    const d = await r.json();
+    const users = d.users || [];
+    document.getElementById('statUsers').textContent = users.length;
+
+    const tbody = document.getElementById('usersBody');
+    if (!users.length) {
+      tbody.innerHTML = '<tr><td colspan="6" style="text-align:center;color:var(--muted);padding:2rem">Belum ada pengguna terdaftar</td></tr>';
+      return;
+    }
+    tbody.innerHTML = users.map(u => `
+      <tr>
+        <td><span class="user-id">${esc(u.user_id)}</span></td>
+        <td><span class="user-name">${esc(u.name)}</span></td>
+        <td style="color:var(--muted)">${esc(u.email||'—')}</td>
+        <td style="color:var(--muted)">${esc(u.phone||'—')}</td>
+        <td style="color:var(--muted);font-size:.78rem">${formatDate(u.registered_at)}</td>
+        <td>
+          <button class="btn-sm btn-danger-sm"
+            onclick="deleteUser('${esc(u.user_id)}','${esc(u.name)}')">
+            Hapus
+          </button>
+        </td>
+      </tr>`).join('');
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+async function loadLogs() {
+  try {
+    const r = await fetch(API + '/api/logs?limit=50');
+    const d = await r.json();
+    const logs = d.logs || [];
+
+    let verified=0, failed=0, spoofs=0;
+    logs.forEach(l => {
+      if(l.is_verified) verified++;
+      else if(l.action==='verify'||l.action==='identify') failed++;
+      if(!l.is_live && l.action!=='register') spoofs++;
+    });
+    document.getElementById('statVerified').textContent = verified;
+    document.getElementById('statFailed').textContent = failed;
+    document.getElementById('statSpoofs').textContent = spoofs;
+
+    const container = document.getElementById('logsBody');
+    if (!logs.length) {
+      container.innerHTML = '<div style="text-align:center;color:var(--muted);padding:2rem;font-size:.85rem">Belum ada log</div>';
+      return;
+    }
+    container.innerHTML = logs.map(l => {
+      const sim = l.similarity_score != null ? (l.similarity_score*100).toFixed(1)+'%' : '—';
+      const live = l.is_live === 1 ? '<span class="chip chip-ok">✓ Live</span>' :
+                   l.is_live === 0 ? '<span class="chip chip-fail">✗ Spoof</span>' : '—';
+      const result = l.is_verified === 1 ? '<span class="chip chip-ok">Sukses</span>' :
+                     l.is_verified === 0 ? '<span class="chip chip-fail">Gagal</span>' :
+                     '<span class="chip chip-info">' + (l.action||'—') + '</span>';
+      return `<div class="log-row">
+        <span>${formatDate(l.timestamp)}</span>
+        <span class="chip chip-info">${l.action||'—'}</span>
+        <span style="color:var(--text)">${esc(l.user_id||'—')}</span>
+        <span>${sim}</span>
+        <span>${live}</span>
+        <span>${result}</span>
+      </div>`;
+    }).join('');
+  } catch(e) {
+    console.error(e);
+  }
+}
+
+async function deleteUser(uid, name) {
+  if (!confirm(`Hapus pengguna "${name}" (${uid})?`)) return;
+  const r = await fetch(API + '/api/users/' + encodeURIComponent(uid), {method:'DELETE'});
+  const d = await r.json();
+  if (d.success) {
+    alert('Pengguna dihapus.');
+    loadUsers();
+    loadLogs();
+  } else {
+    alert('Gagal: ' + d.error);
+  }
+}
+
+function esc(s) {
+  if (!s) return '';
+  return String(s).replace(/&/g,'&amp;').replace(/</g,'&lt;').replace(/>/g,'&gt;');
+}
+
+function formatDate(ts) {
+  if (!ts) return '—';
+  try {
+    const d = new Date(ts.replace(' ','T'));
+    return d.toLocaleDateString('id-ID') + ' ' + d.toLocaleTimeString('id-ID',{hour:'2-digit',minute:'2-digit'});
+  } catch{ return ts; }
+}
+
+// Initial load
+loadUsers();
+loadLogs();
+// Auto-refresh setiap 30 detik
+setInterval(() => { loadUsers(); loadLogs(); }, 30000);
+</script>
+</body>
+</html>

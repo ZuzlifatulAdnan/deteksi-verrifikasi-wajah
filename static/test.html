@@ -1,0 +1,287 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Test Deteksi Wajah</title>
+<style>
+  * { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: system-ui, sans-serif; background: #0f172a; color: #e2e8f0; min-height: 100vh; padding: 24px; }
+  h1 { font-size: 1.4rem; color: #60a5fa; margin-bottom: 20px; }
+  .grid { display: grid; grid-template-columns: 1fr 1fr; gap: 20px; max-width: 900px; }
+  @media (max-width: 600px) { .grid { grid-template-columns: 1fr; } }
+  .card { background: #1e293b; border-radius: 12px; padding: 16px; }
+  .card h2 { font-size: 1rem; color: #94a3b8; margin-bottom: 12px; text-transform: uppercase; letter-spacing: 0.05em; }
+  video, canvas { width: 100%; border-radius: 8px; background: #000; }
+  input, select { width: 100%; padding: 8px 12px; background: #0f172a; border: 1px solid #334155; border-radius: 8px; color: #e2e8f0; font-size: 0.9rem; margin-bottom: 10px; }
+  button { width: 100%; padding: 10px; border: none; border-radius: 8px; font-size: 0.95rem; font-weight: 600; cursor: pointer; margin-bottom: 8px; transition: opacity 0.15s; }
+  button:disabled { opacity: 0.4; cursor: not-allowed; }
+  .btn-blue { background: #2563eb; color: #fff; }
+  .btn-green { background: #16a34a; color: #fff; }
+  .btn-red { background: #dc2626; color: #fff; }
+  .btn-gray { background: #334155; color: #e2e8f0; }
+  .result { margin-top: 12px; padding: 12px; border-radius: 8px; font-size: 0.85rem; min-height: 60px; white-space: pre-wrap; word-break: break-all; }
+  .result.ok { background: #14532d; color: #86efac; border: 1px solid #16a34a; }
+  .result.err { background: #450a0a; color: #fca5a5; border: 1px solid #dc2626; }
+  .result.info { background: #1e3a5f; color: #93c5fd; border: 1px solid #2563eb; }
+  .snap-btn { background: #0ea5e9; color: #fff; }
+  .preview { margin-top: 8px; }
+  .preview img { width: 100%; border-radius: 8px; }
+  .badge { display: inline-block; padding: 2px 8px; border-radius: 999px; font-size: 0.75rem; font-weight: 700; margin-left: 6px; }
+  .badge.live { background: #16a34a; color: #fff; }
+  .badge.fake { background: #dc2626; color: #fff; }
+  .score-bar { height: 8px; border-radius: 4px; background: #334155; margin-top: 6px; overflow: hidden; }
+  .score-fill { height: 100%; border-radius: 4px; transition: width 0.4s; }
+  #log { font-size: 0.75rem; color: #64748b; margin-top: 16px; max-height: 100px; overflow-y: auto; }
+</style>
+</head>
+<body>
+
+<h1>🧪 Test Deteksi &amp; Verifikasi Wajah</h1>
+
+<div class="grid">
+
+  <!-- Kolom kiri: Kamera -->
+  <div class="card">
+    <h2>📷 Kamera</h2>
+    <video id="video" autoplay playsinline muted></video>
+    <div style="margin-top:10px; display:flex; gap:8px;">
+      <button class="btn-blue" onclick="startCam()" id="btnCam">Aktifkan Kamera</button>
+      <button class="snap-btn" onclick="snap()" id="btnSnap" disabled>📸 Ambil Foto</button>
+    </div>
+    <div class="preview" id="preview"></div>
+  </div>
+
+  <!-- Kolom kanan: Aksi -->
+  <div class="card">
+    <h2>⚙️ Aksi</h2>
+
+    <input type="text" id="userId" placeholder="User ID (contoh: user001)" value="user001">
+    <input type="text" id="userName" placeholder="Nama (untuk daftar)" value="Test User">
+
+    <button class="btn-green" onclick="doRegister()" id="btnReg" disabled>✅ Daftarkan Wajah</button>
+    <button class="btn-blue" onclick="doVerify()" id="btnVerify" disabled>🔍 Verifikasi (1:1)</button>
+    <button class="btn-gray" onclick="doIdentify()" id="btnIdentify" disabled>🔎 Identifikasi (1:N)</button>
+    <button class="btn-red" onclick="doDeleteUser()" style="margin-top:4px;">🗑 Hapus User ID</button>
+
+    <div class="result info" id="result">Ambil foto dulu untuk memulai.</div>
+
+    <div class="score-bar" id="scoreBar" style="display:none">
+      <div class="score-fill" id="scoreFill"></div>
+    </div>
+  </div>
+
+</div>
+
+<!-- Users list -->
+<div style="max-width:900px; margin-top:20px;">
+  <div class="card">
+    <h2>👥 Users Terdaftar &nbsp;
+      <button onclick="loadUsers()" style="width:auto;padding:4px 10px;font-size:0.8rem;" class="btn-gray">Refresh</button>
+    </h2>
+    <div id="usersList" style="font-size:0.85rem; color:#94a3b8; margin-top:8px;">— belum dimuat —</div>
+  </div>
+</div>
+
+<div id="log"></div>
+
+<script>
+  let stream = null;
+  let snapB64 = null;
+
+  const video = document.getElementById('video');
+  const result = document.getElementById('result');
+
+  function logMsg(msg) {
+    const d = document.getElementById('log');
+    d.textContent = new Date().toLocaleTimeString() + ' ' + msg + '\n' + d.textContent;
+  }
+
+  async function startCam() {
+    try {
+      stream = await navigator.mediaDevices.getUserMedia({ video: { width: 640, height: 480, facingMode: 'user' } });
+      video.srcObject = stream;
+      document.getElementById('btnCam').disabled = true;
+      document.getElementById('btnSnap').disabled = false;
+      setResult('Kamera aktif. Klik "Ambil Foto" untuk capture wajah.', 'info');
+      logMsg('Kamera aktif');
+    } catch(e) {
+      setResult('Gagal akses kamera: ' + e.message, 'err');
+    }
+  }
+
+  function snap() {
+    if (!stream) return;
+    const canvas = document.createElement('canvas');
+    canvas.width = video.videoWidth || 640;
+    canvas.height = video.videoHeight || 480;
+    canvas.getContext('2d').drawImage(video, 0, 0);
+    snapB64 = canvas.toDataURL('image/jpeg', 0.92);
+
+    const preview = document.getElementById('preview');
+    preview.innerHTML = '<img src="' + snapB64 + '" alt="snapshot">';
+
+    ['btnReg','btnVerify','btnIdentify'].forEach(id => document.getElementById(id).disabled = false);
+    setResult('Foto diambil. Pilih aksi di sebelah kanan.', 'info');
+    logMsg('Foto diambil (' + canvas.width + 'x' + canvas.height + ')');
+  }
+
+  function setResult(msg, type='info') {
+    result.textContent = msg;
+    result.className = 'result ' + type;
+    document.getElementById('scoreBar').style.display = 'none';
+  }
+
+  function showScore(pct, label) {
+    const bar = document.getElementById('scoreBar');
+    const fill = document.getElementById('scoreFill');
+    bar.style.display = 'block';
+    fill.style.width = pct + '%';
+    fill.style.background = pct >= 60 ? '#16a34a' : pct >= 40 ? '#d97706' : '#dc2626';
+  }
+
+  async function apiPost(url, formData) {
+    const r = await fetch(url, { method: 'POST', body: formData });
+    return r.json();
+  }
+
+  async function doRegister() {
+    if (!snapB64) return setResult('Ambil foto dulu!', 'err');
+    const uid = document.getElementById('userId').value.trim();
+    const name = document.getElementById('userName').value.trim();
+    if (!uid || !name) return setResult('Isi User ID dan Nama dulu.', 'err');
+
+    setResult('Mendaftarkan wajah...', 'info');
+    const fd = new FormData();
+    fd.append('user_id', uid);
+    fd.append('name', name);
+    fd.append('image_base64', snapB64);
+    fd.append('skip_spoof', 'false');
+
+    try {
+      const data = await apiPost('/api/register', fd);
+      logMsg('register → ' + JSON.stringify(data).substring(0,120));
+
+      if (data.success) {
+        const sp = data.antispoof;
+        const spScore = sp ? Math.round(sp.score * 100) : '?';
+        const live = sp ? (sp.is_live ? '✅ LIVE' : '⚠️ SPOOF') : '?';
+        setResult(
+          `✅ TERDAFTAR: ${data.name} (${data.user_id})\n` +
+          `Wajah: ${data.face_info ? data.face_info.det_score?.toFixed(2) : '-'} det_score\n` +
+          `Anti-spoof: ${live} — skor ${spScore}%\n` +
+          (sp ? formatSpoof(sp) : ''), 'ok');
+        loadUsers();
+      } else {
+        const sp = data.antispoof;
+        setResult('❌ Gagal: ' + data.error + (sp ? '\nAnti-spoof skor: ' + Math.round(sp.score*100)+'%' : ''), 'err');
+      }
+    } catch(e) {
+      setResult('Error: ' + e.message, 'err');
+    }
+  }
+
+  async function doVerify() {
+    if (!snapB64) return setResult('Ambil foto dulu!', 'err');
+    const uid = document.getElementById('userId').value.trim();
+    if (!uid) return setResult('Isi User ID dulu.', 'err');
+
+    setResult('Memverifikasi wajah...', 'info');
+    const fd = new FormData();
+    fd.append('user_id', uid);
+    fd.append('image_base64', snapB64);
+
+    try {
+      const data = await apiPost('/api/verify', fd);
+      logMsg('verify → ' + JSON.stringify(data).substring(0,120));
+
+      if (data.success) {
+        const pct = data.similarity_pct || 0;
+        showScore(pct);
+        const sp = data.antispoof;
+        setResult(
+          `${data.verified ? '✅ TERVERIFIKASI' : '❌ TIDAK COCOK'}\n` +
+          `Nama: ${data.name}\nSimilaritas: ${pct}% (${data.confidence})\n` +
+          `Liveness: ${data.is_live ? '✅ Live' : '❌ Spoof'}\n` +
+          (sp ? formatSpoof(sp) : ''),
+          data.verified ? 'ok' : 'err'
+        );
+      } else {
+        setResult('❌ ' + (data.error || 'User tidak ditemukan'), 'err');
+      }
+    } catch(e) {
+      setResult('Error: ' + e.message, 'err');
+    }
+  }
+
+  async function doIdentify() {
+    if (!snapB64) return setResult('Ambil foto dulu!', 'err');
+    setResult('Mencari di database...', 'info');
+    const fd = new FormData();
+    fd.append('image_base64', snapB64);
+
+    try {
+      const data = await apiPost('/api/identify', fd);
+      logMsg('identify → ' + JSON.stringify(data).substring(0,120));
+
+      if (data.success && data.identified) {
+        const pct = data.similarity_pct || 0;
+        showScore(pct);
+        const sp = data.antispoof;
+        setResult(
+          `✅ DITEMUKAN: ${data.name} (${data.user_id})\n` +
+          `Similaritas: ${pct}% (${data.confidence})\n` +
+          `Liveness: ${data.is_live ? '✅ Live' : '❌ Spoof'}\n` +
+          (sp ? formatSpoof(sp) : ''), 'ok');
+      } else if (data.success) {
+        setResult('❌ Wajah tidak ditemukan dalam database.\n' +
+          (data.antispoof ? formatSpoof(data.antispoof) : ''), 'err');
+      } else {
+        setResult('❌ ' + (data.error || 'Gagal'), 'err');
+      }
+    } catch(e) {
+      setResult('Error: ' + e.message, 'err');
+    }
+  }
+
+  async function doDeleteUser() {
+    const uid = document.getElementById('userId').value.trim();
+    if (!uid) return setResult('Isi User ID dulu.', 'err');
+    if (!confirm('Hapus user "' + uid + '"?')) return;
+    const r = await fetch('/api/users/' + uid, { method: 'DELETE' });
+    const data = await r.json();
+    setResult(data.success ? '🗑 User dihapus: ' + uid : '❌ ' + data.error, data.success ? 'ok' : 'err');
+    logMsg('delete ' + uid);
+    loadUsers();
+  }
+
+  function formatSpoof(sp) {
+    if (!sp || !sp.checks) return '';
+    const checks = sp.checks;
+    const names = { moire:'Moire', texture:'Tekstur', color:'Warna', quality:'Kualitas', gradient:'Gradien' };
+    return '\nDetail anti-spoof:\n' + Object.entries(names).map(([k,n]) =>
+      `  ${checks[k]?.passed ? '✓' : '✗'} ${n}: ${Math.round((checks[k]?.score||0)*100)}%`
+    ).join('\n');
+  }
+
+  async function loadUsers() {
+    const r = await fetch('/api/users');
+    const data = await r.json();
+    const el = document.getElementById('usersList');
+    if (!data.users || data.users.length === 0) {
+      el.textContent = 'Belum ada user terdaftar.';
+      return;
+    }
+    el.innerHTML = data.users.map(u =>
+      `<div style="padding:6px 0;border-bottom:1px solid #334155">
+        <strong>${u.user_id}</strong> — ${u.name}
+        <span style="color:#64748b;font-size:0.8rem"> | ${u.email||''} | Aktif: ${u.is_active?'Ya':'Tidak'}</span>
+      </div>`
+    ).join('');
+  }
+
+  // Load users on start
+  loadUsers();
+</script>
+</body>
+</html>

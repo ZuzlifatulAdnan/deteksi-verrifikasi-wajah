@@ -1,0 +1,33 @@
+# ============================================================
+# Face Verification System - Dependencies
+# ============================================================
+#
+# MODEL YANG DIGUNAKAN:
+# - InsightFace (buffalo_l) = ArcFace backbone, state-of-the-art face recognition
+#   Akurasi: ~99.4% di LFW benchmark (setara yang dipakai bank/e-wallet)
+# - OpenCV = Library image processing (BUKAN model recognition)
+# - scikit-image = Library image analysis untuk anti-spoofing
+# ============================================================
+
+# Face detection & recognition - MODEL UTAMA
+insightface>=0.7.3        # ArcFace + RetinaFace (sama seperti bank/fintech pakai)
+onnxruntime>=1.19.2       # ONNX runtime untuk jalankan InsightFace models
+
+# Web framework
+fastapi>=0.115.0
+uvicorn[standard]>=0.32.0
+python-multipart>=0.0.9
+aiofiles>=23.0.0
+
+# Image processing (LIBRARY, bukan model)
+opencv-python-headless>=4.10.0.84   # OpenCV = tools pemrosesan gambar
+numpy>=1.24.0
+Pillow>=10.0.0
+
+# Anti-spoofing analysis
+scikit-image>=0.21.0      # LBP texture analysis
+scipy>=1.11.0             # FFT untuk deteksi moire pattern
+
+# Cloud database (opsional)
+supabase>=2.0.0           # Supabase cloud sync (aktif jika SUPABASE_URL & SUPABASE_KEY di-set)
+python-dotenv>=1.0.0      # Load env vars dari file .env
