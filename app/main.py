@@ -11,9 +11,10 @@ from datetime import datetime
 
 import cv2
 import numpy as np
-from fastapi import FastAPI, APIRouter, File, UploadFile, Form, Request, HTTPException
+from fastapi import FastAPI, APIRouter, File, UploadFile, Form, Request, HTTPException, Depends, Security
 from fastapi.responses import JSONResponse, FileResponse
 from fastapi.middleware.cors import CORSMiddleware
+from fastapi.security import APIKeyHeader
 
 from . import database as db
 from .face_engine import FaceEngine
@@ -21,6 +22,19 @@ from .anti_spoof import PassiveAntiSpoof
 
 logging.basicConfig(level=logging.INFO, format="%(asctime)s [%(levelname)s] %(name)s: %(message)s")
 logger = logging.getLogger(__name__)
+
+# ---------------------------------------------------------------------------
+# Admin authentication — semua endpoint admin wajib kirim header X-Admin-Key
+# ---------------------------------------------------------------------------
+_ADMIN_SECRET = os.getenv("ADMIN_SECRET", "")
+_admin_key_header = APIKeyHeader(name="X-Admin-Key", auto_error=False)
+
+
+async def require_admin(key: str = Security(_admin_key_header)):
+    if not _ADMIN_SECRET:
+        raise HTTPException(503, "ADMIN_SECRET belum dikonfigurasi di server")
+    if not key or key != _ADMIN_SECRET:
+        raise HTTPException(401, "Unauthorized: X-Admin-Key tidak valid")
 
 BASE_DIR    = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
 STATIC_DIR  = os.path.join(BASE_DIR, "static")
@@ -545,19 +559,29 @@ async def presensi_laporan(
 # User management
 # ---------------------------------------------------------------------------
 
-@api.get("/users")
+@api.post("/admin/verify-key")
+async def admin_verify_key(key: str = Security(_admin_key_header)):
+    """Frontend pakai ini untuk cek apakah key valid sebelum tampilkan dashboard."""
+    if not _ADMIN_SECRET:
+        raise HTTPException(503, "ADMIN_SECRET belum dikonfigurasi")
+    if not key or key != _ADMIN_SECRET:
+        raise HTTPException(401, "Key tidak valid")
+    return {"success": True}
+
+
+@api.get("/users", dependencies=[Depends(require_admin)])
 async def list_users():
     return {"success": True, "users": db.list_users()}
 
 
-@api.delete("/users/{user_id}")
+@api.delete("/users/{user_id}", dependencies=[Depends(require_admin)])
 async def delete_user(user_id: str):
     if db.delete_user(user_id):
         return {"success": True, "message": f"User {user_id} dihapus"}
     return JSONResponse(content={"success": False, "error": "User tidak ditemukan"}, status_code=404)
 
 
-@api.get("/logs")
+@api.get("/logs", dependencies=[Depends(require_admin)])
 async def get_logs(limit: int = 50):
     return {"success": True, "logs": db.get_logs(limit)}
 

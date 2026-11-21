@@ -123,3 +123,5 @@ Traceback (most recent call last):
     and not (self.status_code < 200 or self.status_code in (204, 304))
              ^^^^^^^^^^^^^^^^^^^^^^
 TypeError: '<' not supported between instances of 'dict' and 'int'
+C:\Users\jusli\AppData\Roaming\Python\Python313\site-packages\insightface\utils\face_align.py:23: FutureWarning: `estimate` is deprecated since version 0.26 and will be removed in version 2.2. Please use `SimilarityTransform.from_estimate` class constructor instead.
+  tform.estimate(lmk, dst)
