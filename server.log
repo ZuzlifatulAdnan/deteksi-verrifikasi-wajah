@@ -80,3 +80,55 @@ INFO:     127.0.0.1:54405 - "GET /api/health HTTP/1.1" 200 OK
 INFO:     127.0.0.1:50898 - "GET /api/users HTTP/1.1" 200 OK
 INFO:     127.0.0.1:56833 - "GET /api/logs?limit=50 HTTP/1.1" 200 OK
 INFO:     127.0.0.1:59861 - "GET /api/presensi/hari-ini HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55034 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62624 - "GET /api/logs?limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56222 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:59128 - "GET /api/logs?limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62926 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49922 - "GET /api/logs?limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56196 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51266 - "GET /api/logs?limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57260 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64766 - "GET /api/logs?limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65378 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:57440 - "GET /api/logs?limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58247 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63605 - "GET /api/logs?limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65434 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:62668 - "GET /api/logs?limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51135 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56230 - "GET /api/logs?limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61026 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:63410 - "GET /api/logs?limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50628 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64339 - "GET /api/logs?limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64339 - "GET /admin.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64339 - "GET /api/users HTTP/1.1" 200 OK
+INFO:     127.0.0.1:50628 - "GET /api/logs?limit=50 HTTP/1.1" 200 OK
+INFO:     127.0.0.1:54133 - "GET /verify.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60907 - "POST /api/identify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51128 - "GET /verify.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51128 - "GET /presensi.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51128 - "GET /api/presensi/hari-ini HTTP/1.1" 200 OK
+INFO:     127.0.0.1:51128 - "POST /api/presensi/masuk HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:53169 - "POST /api/presensi/masuk HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:61249 - "POST /api/presensi/masuk HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:61249 - "GET /api/presensi/hari-ini HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60015 - "POST /api/presensi/masuk HTTP/1.1" 405 Method Not Allowed
+INFO:     127.0.0.1:60015 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:58557 - "GET /verify.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65298 - "POST /api/identify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:65298 - "GET /docs-integrasi.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53875 - "GET /docs HTTP/1.1" 200 OK
+INFO:     127.0.0.1:53875 - "GET /openapi.json HTTP/1.1" 200 OK
+INFO:     127.0.0.1:60152 - "GET /favicon.ico HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64675 - "GET /favicon.ico HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52691 - "GET /docs-integrasi.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52691 - "GET /favicon.ico HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52691 - "GET / HTTP/1.1" 200 OK
+INFO:     127.0.0.1:52691 - "GET /verify.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:55005 - "POST /api/identify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:56608 - "GET /verify.html HTTP/1.1" 200 OK
+INFO:     127.0.0.1:61997 - "POST /api/identify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:64613 - "POST /api/identify HTTP/1.1" 200 OK
+INFO:     127.0.0.1:49675 - "POST /api/identify HTTP/1.1" 200 OK

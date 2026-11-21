@@ -1,26 +1,56 @@
 """
-Database layer: SQLite (default) dengan opsional Supabase cloud sync.
+Database layer: MySQL via mysql-connector-python.
 
-Set env vars untuk aktifkan Supabase:
-  SUPABASE_URL=https://xxxx.supabase.co
-  SUPABASE_KEY=your-anon-key
+Set env vars di .env:
+  MYSQL_HOST=localhost
+  MYSQL_PORT=3306
+  MYSQL_USER=root
+  MYSQL_PASSWORD=your_password
+  MYSQL_DATABASE=faceverify
 """
 import os
-import sqlite3
 import base64
 import logging
 from datetime import datetime
 from typing import Optional, List, Dict
 
 import numpy as np
+import mysql.connector
+from mysql.connector import pooling, errors as mysql_errors
 
 logger = logging.getLogger(__name__)
 
-BASE_DIR = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-DB_PATH  = os.path.join(BASE_DIR, "data", "faces.db")
+# ---------------------------------------------------------------------------
+# Config dari env
+# ---------------------------------------------------------------------------
+_MYSQL_CONFIG = {
+    "host":     os.getenv("MYSQL_HOST",     "localhost"),
+    "port":     int(os.getenv("MYSQL_PORT", "3306")),
+    "user":     os.getenv("MYSQL_USER",     "root"),
+    "password": os.getenv("MYSQL_PASSWORD", ""),
+    "database": os.getenv("MYSQL_DATABASE", "faceverify"),
+    "charset":  "utf8mb4",
+}
+
+_pool: Optional[pooling.MySQLConnectionPool] = None
+
+def _get_pool() -> pooling.MySQLConnectionPool:
+    global _pool
+    if _pool is None:
+        _pool = pooling.MySQLConnectionPool(
+            pool_name="faceverify_pool",
+            pool_size=5,
+            pool_reset_session=True,
+            **_MYSQL_CONFIG,
+        )
+    return _pool
+
+def _conn():
+    return _get_pool().get_connection()
+
 
 # ---------------------------------------------------------------------------
-# Optional Supabase
+# Supabase (opsional, tetap didukung)
 # ---------------------------------------------------------------------------
 _supabase = None
 _SUPABASE_URL = os.getenv("SUPABASE_URL", "")
@@ -32,9 +62,12 @@ if _SUPABASE_URL and _SUPABASE_KEY:
         _supabase = create_client(_SUPABASE_URL, _SUPABASE_KEY)
         logger.info("Supabase terhubung: %s", _SUPABASE_URL)
     except Exception as e:
-        logger.warning("Supabase gagal terhubung: %s — pakai SQLite saja.", e)
+        logger.warning("Supabase gagal: %s", e)
 
 
+# ---------------------------------------------------------------------------
+# Helper
+# ---------------------------------------------------------------------------
 def _emb_to_b64(emb: np.ndarray) -> str:
     return base64.b64encode(emb.astype(np.float32).tobytes()).decode()
 
@@ -46,70 +79,75 @@ def _now() -> str:
 
 
 # ---------------------------------------------------------------------------
-# SQLite connection
+# Init DB — buat tabel jika belum ada
 # ---------------------------------------------------------------------------
-
-def _conn():
-    os.makedirs(os.path.dirname(DB_PATH), exist_ok=True)
-    c = sqlite3.connect(DB_PATH)
-    c.row_factory = sqlite3.Row
-    return c
-
-
 def init_db():
+    # Pastikan database ada (buat jika belum)
+    cfg_no_db = {k: v for k, v in _MYSQL_CONFIG.items() if k != "database"}
+    tmp = mysql.connector.connect(**cfg_no_db)
+    cur = tmp.cursor()
+    cur.execute(
+        f"CREATE DATABASE IF NOT EXISTS `{_MYSQL_CONFIG['database']}` "
+        "CHARACTER SET utf8mb4 COLLATE utf8mb4_unicode_ci"
+    )
+    tmp.commit()
+    cur.close()
+    tmp.close()
+
     c = _conn()
     cur = c.cursor()
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS users (
-            id              INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id         TEXT UNIQUE NOT NULL,
-            name            TEXT NOT NULL,
-            email           TEXT,
-            phone           TEXT,
-            face_embedding  BLOB NOT NULL,
-            face_image      TEXT,
-            registered_at   TEXT DEFAULT (datetime('now','localtime')),
-            updated_at      TEXT,
-            is_active       INTEGER DEFAULT 1
-        )
+            id              INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            user_id         VARCHAR(100) UNIQUE NOT NULL,
+            name            VARCHAR(200) NOT NULL,
+            email           VARCHAR(200),
+            phone           VARCHAR(50),
+            face_embedding  LONGBLOB NOT NULL,
+            face_image      LONGTEXT,
+            registered_at   DATETIME DEFAULT CURRENT_TIMESTAMP,
+            updated_at      DATETIME,
+            is_active       TINYINT(1) DEFAULT 1
+        ) ENGINE=InnoDB
     """)
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS logs (
-            id               INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id          TEXT,
-            action           TEXT,
-            similarity_score REAL,
-            is_verified      INTEGER,
-            is_live          INTEGER,
-            antispoof_score  REAL,
-            timestamp        TEXT DEFAULT (datetime('now','localtime')),
-            ip_address       TEXT,
+            id               INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            user_id          VARCHAR(100),
+            action           VARCHAR(50),
+            similarity_score DOUBLE,
+            is_verified      TINYINT(1),
+            is_live          TINYINT(1),
+            antispoof_score  DOUBLE,
+            timestamp        DATETIME DEFAULT CURRENT_TIMESTAMP,
+            ip_address       VARCHAR(45),
             notes            TEXT
-        )
+        ) ENGINE=InnoDB
     """)
 
     cur.execute("""
         CREATE TABLE IF NOT EXISTS attendance (
-            id              INTEGER PRIMARY KEY AUTOINCREMENT,
-            user_id         TEXT NOT NULL,
-            name            TEXT,
-            tipe            TEXT NOT NULL,
-            similarity      REAL,
-            is_live         INTEGER,
-            antispoof_score REAL,
-            device_id       TEXT,
-            location        TEXT,
-            ip_address      TEXT,
-            waktu           TEXT DEFAULT (datetime('now','localtime')),
+            id              INT NOT NULL AUTO_INCREMENT PRIMARY KEY,
+            user_id         VARCHAR(100) NOT NULL,
+            name            VARCHAR(200),
+            tipe            VARCHAR(20) NOT NULL,
+            similarity      DOUBLE,
+            is_live         TINYINT(1),
+            antispoof_score DOUBLE,
+            device_id       VARCHAR(100),
+            location        VARCHAR(200),
+            ip_address      VARCHAR(45),
+            waktu           DATETIME DEFAULT CURRENT_TIMESTAMP,
             notes           TEXT
-        )
+        ) ENGINE=InnoDB
     """)
 
     c.commit()
+    cur.close()
     c.close()
-    logger.info("Database initialized at %s", DB_PATH)
+    logger.info("MySQL database '%s' initialized.", _MYSQL_CONFIG["database"])
 
 
 # ---------------------------------------------------------------------------
@@ -120,26 +158,28 @@ def register_user(user_id: str, name: str, embedding: np.ndarray,
                   email: str = None, phone: str = None,
                   face_image: str = None) -> Dict:
     blob = embedding.astype(np.float32).tobytes()
+    action = "created"
     c = _conn()
     cur = c.cursor()
-    action = "created"
     try:
         cur.execute(
-            "INSERT INTO users (user_id,name,email,phone,face_embedding,face_image) VALUES (?,?,?,?,?,?)",
+            "INSERT INTO users (user_id,name,email,phone,face_embedding,face_image) "
+            "VALUES (%s,%s,%s,%s,%s,%s)",
             (user_id, name, email, phone, blob, face_image)
         )
-    except sqlite3.IntegrityError:
+    except mysql_errors.IntegrityError:
         cur.execute(
-            """UPDATE users SET name=?,email=?,phone=?,face_embedding=?,
-               face_image=COALESCE(?,face_image),updated_at=datetime('now','localtime')
-               WHERE user_id=?""",
+            """UPDATE users SET name=%s, email=%s, phone=%s,
+               face_embedding=%s, face_image=COALESCE(%s,face_image),
+               updated_at=NOW()
+               WHERE user_id=%s""",
             (name, email, phone, blob, face_image, user_id)
         )
         action = "updated"
     c.commit()
+    cur.close()
     c.close()
 
-    # Supabase sync
     if _supabase:
         try:
             payload = {"user_id": user_id, "name": name, "email": email,
@@ -158,9 +198,10 @@ def register_user(user_id: str, name: str, embedding: np.ndarray,
 
 def get_user(user_id: str) -> Optional[Dict]:
     c = _conn()
-    cur = c.cursor()
-    cur.execute("SELECT * FROM users WHERE user_id=? AND is_active=1", (user_id,))
+    cur = c.cursor(dictionary=True)
+    cur.execute("SELECT * FROM users WHERE user_id=%s AND is_active=1", (user_id,))
     row = cur.fetchone()
+    cur.close()
     c.close()
     if row is None:
         return None
@@ -169,28 +210,32 @@ def get_user(user_id: str) -> Optional[Dict]:
         "name":          row["name"],
         "email":         row["email"],
         "phone":         row["phone"],
-        # FIX: .copy() so the array is writable and not backed by raw SQLite bytes
-        "embedding":     np.frombuffer(row["face_embedding"], dtype=np.float32).copy(),
+        "embedding":     np.frombuffer(bytes(row["face_embedding"]), dtype=np.float32).copy(),
         "face_image":    row["face_image"],
-        "registered_at": row["registered_at"],
+        "registered_at": str(row["registered_at"]),
     }
 
 
 def list_users() -> List[Dict]:
     c = _conn()
-    cur = c.cursor()
-    cur.execute("SELECT user_id,name,email,phone,registered_at,face_image FROM users WHERE is_active=1 ORDER BY registered_at DESC")
+    cur = c.cursor(dictionary=True)
+    cur.execute(
+        "SELECT user_id,name,email,phone,registered_at,face_image "
+        "FROM users WHERE is_active=1 ORDER BY registered_at DESC"
+    )
     rows = cur.fetchall()
+    cur.close()
     c.close()
-    return [dict(r) for r in rows]
+    return [{**r, "registered_at": str(r["registered_at"])} for r in rows]
 
 
 def delete_user(user_id: str) -> bool:
     c = _conn()
     cur = c.cursor()
-    cur.execute("UPDATE users SET is_active=0 WHERE user_id=?", (user_id,))
+    cur.execute("UPDATE users SET is_active=0 WHERE user_id=%s", (user_id,))
     affected = cur.rowcount
     c.commit()
+    cur.close()
     c.close()
     if affected and _supabase:
         try:
@@ -206,21 +251,25 @@ def delete_user(user_id: str) -> bool:
 
 def find_best_match(query_emb: np.ndarray, threshold: float = 0.35) -> Optional[Dict]:
     c = _conn()
-    cur = c.cursor()
+    cur = c.cursor(dictionary=True)
     cur.execute("SELECT user_id,name,face_embedding FROM users WHERE is_active=1")
     rows = cur.fetchall()
+    cur.close()
     c.close()
 
     best, best_score = None, -1.0
     for row in rows:
-        # FIX: .copy() — same fix as get_user
-        stored = np.frombuffer(row["face_embedding"], dtype=np.float32).copy()
+        stored = np.frombuffer(bytes(row["face_embedding"]), dtype=np.float32).copy()
         n1, n2 = np.linalg.norm(query_emb), np.linalg.norm(stored)
         if n1 == 0 or n2 == 0:
             continue
         sim = float(np.dot(query_emb, stored) / (n1 * n2))
         if sim > best_score:
-            best_score, best = sim, {"user_id": row["user_id"], "name": row["name"], "similarity": sim}
+            best_score, best = sim, {
+                "user_id": row["user_id"],
+                "name":    row["name"],
+                "similarity": sim,
+            }
 
     if best and best_score >= threshold:
         return best
@@ -237,21 +286,25 @@ def log_event(user_id: str, action: str, similarity: float = None,
     c = _conn()
     cur = c.cursor()
     cur.execute(
-        "INSERT INTO logs (user_id,action,similarity_score,is_verified,is_live,antispoof_score,ip_address,notes) VALUES (?,?,?,?,?,?,?,?)",
+        "INSERT INTO logs "
+        "(user_id,action,similarity_score,is_verified,is_live,antispoof_score,ip_address,notes) "
+        "VALUES (%s,%s,%s,%s,%s,%s,%s,%s)",
         (user_id, action, similarity,
          1 if verified else (0 if verified is not None else None),
-         1 if is_live else (0 if is_live is not None else None),
+         1 if is_live  else (0 if is_live  is not None else None),
          antispoof_score, ip, notes)
     )
     c.commit()
+    cur.close()
     c.close()
 
     if _supabase:
         try:
             _supabase.table("logs").insert({
-                "user_id": user_id, "action": action, "similarity_score": similarity,
-                "is_verified": verified, "is_live": is_live,
-                "antispoof_score": antispoof_score, "ip_address": ip, "notes": notes,
+                "user_id": user_id, "action": action,
+                "similarity_score": similarity, "is_verified": verified,
+                "is_live": is_live, "antispoof_score": antispoof_score,
+                "ip_address": ip, "notes": notes,
             }).execute()
         except Exception as e:
             logger.warning("Supabase log sync gagal: %s", e)
@@ -259,11 +312,12 @@ def log_event(user_id: str, action: str, similarity: float = None,
 
 def get_logs(limit: int = 50) -> List[Dict]:
     c = _conn()
-    cur = c.cursor()
-    cur.execute("SELECT * FROM logs ORDER BY timestamp DESC LIMIT ?", (limit,))
+    cur = c.cursor(dictionary=True)
+    cur.execute("SELECT * FROM logs ORDER BY timestamp DESC LIMIT %s", (limit,))
     rows = cur.fetchall()
+    cur.close()
     c.close()
-    return [dict(r) for r in rows]
+    return [{**r, "timestamp": str(r["timestamp"])} for r in rows]
 
 
 # ---------------------------------------------------------------------------
@@ -275,20 +329,21 @@ def clock_attendance(user_id: str, name: str, tipe: str,
                      antispoof_score: float = None,
                      device_id: str = None, location: str = None,
                      ip: str = None, notes: str = None) -> Dict:
-    """Catat presensi masuk atau keluar."""
+    waktu = _now()
     c = _conn()
     cur = c.cursor()
-    waktu = _now()
     cur.execute(
-        """INSERT INTO attendance
-           (user_id,name,tipe,similarity,is_live,antispoof_score,device_id,location,ip_address,waktu,notes)
-           VALUES (?,?,?,?,?,?,?,?,?,?,?)""",
+        "INSERT INTO attendance "
+        "(user_id,name,tipe,similarity,is_live,antispoof_score,"
+        " device_id,location,ip_address,waktu,notes) "
+        "VALUES (%s,%s,%s,%s,%s,%s,%s,%s,%s,%s,%s)",
         (user_id, name, tipe, similarity,
          1 if is_live else 0, antispoof_score,
          device_id, location, ip, waktu, notes)
     )
     att_id = cur.lastrowid
     c.commit()
+    cur.close()
     c.close()
 
     if _supabase:
@@ -297,7 +352,8 @@ def clock_attendance(user_id: str, name: str, tipe: str,
                 "user_id": user_id, "name": name, "tipe": tipe,
                 "similarity": similarity, "is_live": is_live,
                 "antispoof_score": antispoof_score, "device_id": device_id,
-                "location": location, "ip_address": ip, "waktu": waktu, "notes": notes,
+                "location": location, "ip_address": ip,
+                "waktu": waktu, "notes": notes,
             }).execute()
         except Exception as e:
             logger.warning("Supabase attendance sync gagal: %s", e)
@@ -308,63 +364,72 @@ def clock_attendance(user_id: str, name: str, tipe: str,
 def get_today_attendance() -> List[Dict]:
     today = datetime.now().strftime("%Y-%m-%d")
     c = _conn()
-    cur = c.cursor()
+    cur = c.cursor(dictionary=True)
     cur.execute(
-        "SELECT * FROM attendance WHERE waktu LIKE ? ORDER BY waktu DESC",
-        (f"{today}%",)
+        "SELECT * FROM attendance WHERE DATE(waktu)=%s ORDER BY waktu DESC",
+        (today,)
     )
     rows = cur.fetchall()
+    cur.close()
     c.close()
-    return [dict(r) for r in rows]
+    return [{**r, "waktu": str(r["waktu"])} for r in rows]
 
 
 def get_attendance_history(user_id: str, limit: int = 30) -> List[Dict]:
     c = _conn()
-    cur = c.cursor()
+    cur = c.cursor(dictionary=True)
     cur.execute(
-        "SELECT * FROM attendance WHERE user_id=? ORDER BY waktu DESC LIMIT ?",
+        "SELECT * FROM attendance WHERE user_id=%s ORDER BY waktu DESC LIMIT %s",
         (user_id, limit)
     )
     rows = cur.fetchall()
+    cur.close()
     c.close()
-    return [dict(r) for r in rows]
+    return [{**r, "waktu": str(r["waktu"])} for r in rows]
 
 
 def get_attendance_report(date_from: str = None, date_to: str = None,
                           limit: int = 200) -> List[Dict]:
     c = _conn()
-    cur = c.cursor()
+    cur = c.cursor(dictionary=True)
     if date_from and date_to:
         cur.execute(
-            "SELECT * FROM attendance WHERE waktu BETWEEN ? AND ? ORDER BY waktu DESC LIMIT ?",
+            "SELECT * FROM attendance WHERE waktu BETWEEN %s AND %s "
+            "ORDER BY waktu DESC LIMIT %s",
             (f"{date_from} 00:00:00", f"{date_to} 23:59:59", limit)
         )
     elif date_from:
         cur.execute(
-            "SELECT * FROM attendance WHERE waktu >= ? ORDER BY waktu DESC LIMIT ?",
+            "SELECT * FROM attendance WHERE waktu >= %s ORDER BY waktu DESC LIMIT %s",
             (f"{date_from} 00:00:00", limit)
         )
     else:
-        cur.execute("SELECT * FROM attendance ORDER BY waktu DESC LIMIT ?", (limit,))
+        cur.execute("SELECT * FROM attendance ORDER BY waktu DESC LIMIT %s", (limit,))
     rows = cur.fetchall()
+    cur.close()
     c.close()
-    return [dict(r) for r in rows]
+    return [{**r, "waktu": str(r["waktu"])} for r in rows]
 
 
 def get_attendance_stats() -> Dict:
     today = datetime.now().strftime("%Y-%m-%d")
     c = _conn()
     cur = c.cursor()
-    cur.execute("SELECT COUNT(*) FROM attendance WHERE waktu LIKE ? AND tipe='masuk'", (f"{today}%",))
+    cur.execute(
+        "SELECT COUNT(*) FROM attendance WHERE DATE(waktu)=%s AND tipe='masuk'", (today,)
+    )
     masuk_today = cur.fetchone()[0]
-    cur.execute("SELECT COUNT(*) FROM attendance WHERE waktu LIKE ? AND tipe='keluar'", (f"{today}%",))
+    cur.execute(
+        "SELECT COUNT(*) FROM attendance WHERE DATE(waktu)=%s AND tipe='keluar'", (today,)
+    )
     keluar_today = cur.fetchone()[0]
     cur.execute("SELECT COUNT(DISTINCT user_id) FROM users WHERE is_active=1")
     total_users = cur.fetchone()[0]
+    cur.close()
     c.close()
     return {
-        "masuk_hari_ini": masuk_today,
+        "masuk_hari_ini":  masuk_today,
         "keluar_hari_ini": keluar_today,
-        "total_karyawan": total_users,
-        "tanggal": today,
+        "total_karyawan":  total_users,
+        "tanggal":         today,
     }

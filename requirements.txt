@@ -28,6 +28,9 @@ Pillow>=10.0.0
 scikit-image>=0.21.0      # LBP texture analysis
 scipy>=1.11.0             # FFT untuk deteksi moire pattern
 
-# Cloud database (opsional)
+# Database
+mysql-connector-python>=8.3.0   # MySQL driver langsung (tanpa ORM)
+python-dotenv>=1.0.0            # Load env vars dari file .env
+
+# Cloud sync (opsional)
 supabase>=2.0.0           # Supabase cloud sync (aktif jika SUPABASE_URL & SUPABASE_KEY di-set)
-python-dotenv>=1.0.0      # Load env vars dari file .env
