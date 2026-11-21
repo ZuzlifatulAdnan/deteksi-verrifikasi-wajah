@@ -4,26 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Verifikasi Wajah — FaceVerify</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #07101e; --surface: #0d1829; --card: #111f36; --border: #1b2d44;
-  --accent: #3b82f6; --sky: #0ea5e9; --green: #10b981; --amber: #f59e0b; --red: #ef4444;
-  --text: #e2e8f0; --muted: #64748b; --r: 14px; color-scheme: dark;
+  --base: #060C18; --void: #03060C; --panel: #0D1526; --border: #152035;
+  --teal: #00C2A8; --sky: #0ea5e9; --green: #10b981; --amber: #f59e0b; --red: #ef4444;
+  --text: #e2e8f0; --muted: #64748b; color-scheme: dark;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--base);
+  background-image: radial-gradient(circle at 1px 1px, rgba(0,194,168,0.04) 1px, transparent 0);
+  background-size: 24px 24px;
+  color: var(--text); min-height: 100vh;
+}
 
 nav {
   display: flex; align-items: center; justify-content: space-between;
   padding: .85rem max(1.5rem, env(safe-area-inset-left,0px));
-  background: rgba(13,24,41,.96); border-bottom: 1px solid var(--border);
+  background: rgba(6,12,24,0.96); border-bottom: 1px solid var(--border);
   backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100;
 }
-.logo { font-weight: 800; font-size: 1.1rem; color: var(--accent); text-decoration: none; }
+.logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700; font-size: 1.1rem; color: var(--teal);
+  text-decoration: none; letter-spacing: 0.06em;
+}
 .logo span { color: var(--text); }
-.nav-links a { color: var(--muted); text-decoration: none; font-size: .85rem; padding: .35rem .75rem; border-radius: 8px; transition: .2s; }
-.nav-links a:hover { background: var(--card); color: var(--text); }
+.nav-links a {
+  color: var(--muted); text-decoration: none; font-size: .78rem;
+  font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em;
+  padding: .35rem .75rem; border-radius: 2px; transition: .2s;
+}
+.nav-links a:hover { background: var(--panel); color: var(--text); }
 
 .page {
   max-width: 1400px; margin: 0 auto;
@@ -33,62 +47,88 @@ nav {
 @media (max-width: 820px) { .page { grid-template-columns: 1fr; } }
 
 /* CARD */
-.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 1.5rem; }
-h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.2rem; }
+.card {
+  background: var(--panel); border: 1px solid var(--border); padding: 1.5rem;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.05rem; font-weight: 700; margin-bottom: 1.2rem; letter-spacing: -0.01em;
+}
 .field { margin-bottom: .85rem; }
-label { display: block; font-size: .72rem; font-weight: 600; color: var(--muted); margin-bottom: .3rem; text-transform: uppercase; letter-spacing: .05em; }
+label {
+  display: block; font-size: .65rem; font-weight: 600; color: var(--muted);
+  margin-bottom: .3rem; text-transform: uppercase; letter-spacing: .1em;
+  font-family: 'JetBrains Mono', monospace;
+}
 input {
-  width: 100%; padding: .65rem .9rem; border-radius: 10px;
-  background: var(--bg); border: 1.5px solid var(--border);
+  width: 100%; padding: .65rem .9rem;
+  background: var(--void); border: 1.5px solid var(--border);
   color: var(--text); font-family: 'Inter',sans-serif; font-size: .9rem; transition: border-color .2s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
 }
-input:focus { outline: none; border-color: var(--accent); }
+input:focus { outline: none; border-color: var(--teal); }
 .btn {
-  width: 100%; padding: .8rem; border-radius: 11px; font-weight: 700; font-size: .95rem;
-  cursor: pointer; transition: all .2s; font-family: 'Inter',sans-serif; border: none;
+  width: 100%; padding: .8rem; font-weight: 700; font-size: .78rem;
+  cursor: pointer; transition: all .2s; font-family: 'JetBrains Mono',monospace;
+  border: none; letter-spacing: 0.1em;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 }
-.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 18px rgba(59,130,246,.3); }
-.btn-primary:hover { background: #2563eb; }
+.btn-primary { background: var(--teal); color: var(--void); box-shadow: 0 4px 18px rgba(0,194,168,.2); }
+.btn-primary:hover { background: #00dfc0; }
 .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
 .btn-outline { background: transparent; color: var(--muted); border: 1.5px solid var(--border); }
-.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-outline:hover { border-color: var(--teal); color: var(--teal); }
 .btn + .btn { margin-top: .5rem; }
 
 /* MODE TOGGLE */
-.mode-tabs { display: flex; gap: 0; border-radius: 11px; border: 1.5px solid var(--border); overflow: hidden; margin-bottom: 1.2rem; }
+.mode-tabs {
+  display: flex; gap: 0; border: 1.5px solid var(--border); overflow: hidden; margin-bottom: 1.2rem;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
+}
 .mode-tab {
   flex: 1; padding: .65rem; border: none; background: transparent; color: var(--muted);
-  font-family: 'Inter',sans-serif; font-size: .82rem; font-weight: 600; cursor: pointer; transition: .2s;
+  font-family: 'JetBrains Mono', monospace; font-size: .72rem; font-weight: 600;
+  cursor: pointer; transition: .2s; letter-spacing: 0.06em;
 }
-.mode-tab.active { background: var(--accent); color: #fff; }
+.mode-tab.active { background: var(--teal); color: var(--void); }
 
 /* SCORE METER */
 .score-wrap { margin: .9rem 0; }
-.score-label { display: flex; justify-content: space-between; font-size: .78rem; color: var(--muted); margin-bottom: .35rem; }
-.score-track { height: 8px; border-radius: 999px; background: var(--border); overflow: hidden; }
-.score-fill { height: 100%; border-radius: 999px; transition: width .5s cubic-bezier(.4,0,.2,1), background .4s; }
+.score-label {
+  display: flex; justify-content: space-between;
+  font-size: .68rem; color: var(--muted); margin-bottom: .35rem;
+  font-family: 'JetBrains Mono', monospace;
+}
+.score-track { height: 4px; background: var(--border); overflow: hidden; }
+.score-fill { height: 100%; transition: width .5s cubic-bezier(.4,0,.2,1), background .4s; }
 
 /* RESULT CARD */
 .result-box { display: none; }
 .result-box.show { display: block; }
 .res-verdict {
-  text-align: center; padding: 1rem; border-radius: 12px; margin-bottom: 1rem;
-  font-size: 1.1rem; font-weight: 800; letter-spacing: .03em;
+  text-align: center; padding: 1rem; margin-bottom: 1rem;
+  font-size: 1rem; font-weight: 800; letter-spacing: .08em;
+  font-family: 'Space Grotesk', sans-serif;
 }
-.res-verdict.ok   { background: rgba(16,185,129,.12); color: var(--green); border: 1.5px solid rgba(16,185,129,.3); }
-.res-verdict.fail { background: rgba(239,68,68,.12);  color: var(--red);   border: 1.5px solid rgba(239,68,68,.3); }
-.res-row { display: flex; justify-content: space-between; align-items: center; padding: .4rem 0; border-bottom: 1px solid var(--border); font-size: .82rem; }
+.res-verdict.ok   { background: rgba(16,185,129,.1); color: var(--green); border: 1.5px solid rgba(16,185,129,.25); }
+.res-verdict.fail { background: rgba(239,68,68,.1);  color: var(--red);   border: 1.5px solid rgba(239,68,68,.25); }
+.res-row {
+  display: flex; justify-content: space-between; align-items: center;
+  padding: .4rem 0; border-bottom: 1px solid var(--border); font-size: .78rem;
+}
 .res-row:last-child { border-bottom: none; }
-.res-row span:first-child { color: var(--muted); }
-.res-row span:last-child { font-weight: 600; }
+.res-row span:first-child { color: var(--muted); font-family: 'JetBrains Mono', monospace; font-size: .68rem; letter-spacing: .04em; }
+.res-row span:last-child { font-weight: 600; font-family: 'JetBrains Mono', monospace; }
 .badge-ok   { color: var(--green); }
 .badge-fail { color: var(--red); }
 .badge-warn { color: var(--amber); }
 
 /* CAMERA */
 .cam-wrap {
-  position: relative; width: 100%; border-radius: var(--r); overflow: hidden;
-  background: #03080f; aspect-ratio: 4/3; min-height: 480px;
+  position: relative; width: 100%; overflow: hidden;
+  background: var(--void); aspect-ratio: 4/3; min-height: 480px;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
 }
 #video {
   position: absolute; inset: 0; width: 100%; height: 100%;
@@ -97,36 +137,37 @@ input:focus { outline: none; border-color: var(--accent); }
 .cam-svg { position: absolute; inset: 0; width: 100%; height: 100%; pointer-events: none; display: none; }
 .cam-placeholder {
   position: absolute; inset: 0; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 1rem; color: var(--muted); background: #03080f;
+  align-items: center; justify-content: center; gap: 1rem; color: var(--muted); background: var(--void);
 }
 .cam-placeholder svg { opacity: .18; }
-.cam-placeholder p { font-size: .85rem; text-align: center; line-height: 1.6; }
+.cam-placeholder p { font-size: .78rem; text-align: center; line-height: 1.6; font-family: 'JetBrains Mono', monospace; }
 .cam-placeholder.hidden { display: none; }
 
 .overlay-abs {
   position: absolute; inset: 0; display: none;
   flex-direction: column; align-items: center; justify-content: center; gap: .9rem;
-  border-radius: var(--r);
 }
 .overlay-abs.show { display: flex; }
-.ov-process { background: rgba(7,16,30,.88); backdrop-filter: blur(4px); }
+.ov-process { background: rgba(3,6,12,.88); backdrop-filter: blur(4px); }
 .ov-success { background: rgba(16,185,129,.13); border: 2px solid rgba(16,185,129,.35); }
 .ov-fail    { background: rgba(239,68,68,.13);  border: 2px solid rgba(239,68,68,.3); }
 
 @keyframes spin { to { transform: rotate(360deg); } }
-.ring { width: 56px; height: 56px; border: 4px solid rgba(59,130,246,.2); border-top-color: var(--accent); border-radius: 50%; animation: spin .75s linear infinite; }
+.ring { width: 56px; height: 56px; border: 4px solid rgba(0,194,168,.2); border-top-color: var(--teal); border-radius: 50%; animation: spin .75s linear infinite; }
 .ov-icon { font-size: 3.5rem; }
-.ov-name { font-size: 1.15rem; font-weight: 800; color: var(--text); text-align: center; }
-.ov-score { font-size: 2rem; font-weight: 800; }
-.ov-sub   { font-size: .82rem; color: var(--muted); font-family: monospace; }
+.ov-name { font-size: 1.15rem; font-weight: 800; color: var(--text); text-align: center; font-family: 'Space Grotesk', sans-serif; }
+.ov-score { font-size: 2rem; font-weight: 800; font-family: 'Space Grotesk', sans-serif; }
+.ov-sub   { font-size: .78rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
 .ov-score.ok   { color: var(--green); }
 .ov-score.fail { color: var(--red); }
 
 .cam-status {
-  margin-top: .7rem; padding: .6rem 1rem; border-radius: 10px;
-  font-size: .84rem; font-weight: 500; text-align: center;
-  background: rgba(59,130,246,.07); border: 1px solid rgba(59,130,246,.15); color: var(--accent);
+  margin-top: .7rem; padding: .6rem 1rem;
+  font-size: .75rem; font-weight: 500; text-align: center;
+  font-family: 'JetBrains Mono', monospace; letter-spacing: 0.03em;
+  background: rgba(0,194,168,.07); border: 1px solid rgba(0,194,168,.15); color: var(--teal);
   transition: all .3s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
 }
 .cam-status.ok   { background: rgba(16,185,129,.07); border-color: rgba(16,185,129,.2); color: var(--green); }
 .cam-status.warn { background: rgba(245,158,11,.07); border-color: rgba(245,158,11,.2); color: var(--amber); }
@@ -134,9 +175,13 @@ input:focus { outline: none; border-color: var(--accent); }
 
 .cam-ctrl { display: flex; gap: .6rem; margin-top: .6rem; visibility: hidden; }
 .cam-ctrl.show { visibility: visible; }
-.btn-sm { padding: .6rem .9rem; border-radius: 10px; font-weight: 600; font-size: .82rem; cursor: pointer; border: none; font-family: 'Inter',sans-serif; transition: all .2s; }
-.btn-sm-p { background: var(--accent); color: #fff; flex: 2; }
-.btn-sm-p:hover { background: #2563eb; }
+.btn-sm {
+  padding: .6rem .9rem; font-weight: 600; font-size: .72rem; cursor: pointer; border: none;
+  font-family: 'JetBrains Mono',monospace; transition: all .2s; letter-spacing: 0.08em;
+  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px));
+}
+.btn-sm-p { background: var(--teal); color: var(--void); flex: 2; }
+.btn-sm-p:hover { background: #00dfc0; }
 .btn-sm-o { background: transparent; color: var(--muted); border: 1.5px solid var(--border); flex: 1; }
 .btn-sm-o:hover { border-color: var(--red); color: var(--red); }
 </style>
@@ -144,10 +189,12 @@ input:focus { outline: none; border-color: var(--accent); }
 <body>
 
 <nav>
-  <a href="/" class="logo">Face<span>Verify</span></a>
+  <a href="/" class="logo"><span>FACE</span>VERIFY</a>
   <div class="nav-links">
     <a href="/register.html">Daftar</a>
+    <a href="/presensi.html">Presensi</a>
     <a href="/admin.html">Admin</a>
+    <a href="/docs-integrasi.html">Integrasi</a>
   </div>
 </nav>
 
@@ -157,8 +204,8 @@ input:focus { outline: none; border-color: var(--accent); }
   <div>
     <!-- Mode toggle -->
     <div class="mode-tabs">
-      <button class="mode-tab active" id="tab11" onclick="setMode('1:1')">🔍 Verifikasi (1:1)</button>
-      <button class="mode-tab" id="tab1n" onclick="setMode('1:N')">🔎 Identifikasi (1:N)</button>
+      <button class="mode-tab active" id="tab11" onclick="setMode('1:1')">VERIFIKASI 1:1</button>
+      <button class="mode-tab" id="tab1n" onclick="setMode('1:N')">IDENTIFIKASI 1:N</button>
     </div>
 
     <div class="card">
@@ -170,39 +217,39 @@ input:focus { outline: none; border-color: var(--accent); }
           <label>ID Pengguna</label>
           <input id="userId" placeholder="Masukkan ID yang terdaftar" autocomplete="off">
         </div>
-        <div style="color:var(--muted);font-size:.78rem;margin-bottom:.9rem;line-height:1.5">
+        <div style="color:var(--muted);font-size:.72rem;margin-bottom:.9rem;line-height:1.6;font-family:'JetBrains Mono',monospace">
           Verifikasi apakah wajah yang terlihat milik pengguna dengan ID tersebut.
         </div>
       </div>
 
       <!-- 1:N description -->
       <div id="form1n" style="display:none">
-        <div style="color:var(--muted);font-size:.82rem;margin-bottom:.9rem;line-height:1.5;padding:.75rem;background:rgba(14,165,233,.06);border:1px solid rgba(14,165,233,.12);border-radius:10px">
-          🔍 Sistem akan mencocokkan wajah dengan <strong>seluruh database</strong> pengguna secara otomatis.
+        <div style="color:var(--muted);font-size:.78rem;margin-bottom:.9rem;line-height:1.5;padding:.75rem;background:rgba(0,194,168,.05);border:1px solid rgba(0,194,168,.12);font-family:'JetBrains Mono',monospace;font-size:.72rem">
+          Sistem akan mencocokkan wajah dengan <strong style="color:var(--text)">seluruh database</strong> pengguna secara otomatis.
         </div>
       </div>
 
-      <button class="btn btn-primary" id="btnStartCam">📷  Mulai Verifikasi</button>
+      <button class="btn btn-primary" id="btnStartCam">MULAI VERIFIKASI</button>
     </div>
 
     <!-- Result card -->
     <div class="card result-box" id="resultBox" style="margin-top:1rem">
-      <div class="res-verdict" id="resVerdict">TERVERIFIKASI ✓</div>
+      <div class="res-verdict" id="resVerdict">TERVERIFIKASI</div>
 
-      <div class="res-row"><span>Nama</span><span id="resName">—</span></div>
-      <div class="res-row"><span>ID Pengguna</span><span id="resUid">—</span></div>
+      <div class="res-row"><span>NAMA</span><span id="resName">—</span></div>
+      <div class="res-row"><span>ID PENGGUNA</span><span id="resUid">—</span></div>
 
       <div class="score-wrap" id="scoreWrap" style="display:none">
-        <div class="score-label"><span>Kemiripan Wajah</span><span id="scorePct">0%</span></div>
+        <div class="score-label"><span>KEMIRIPAN WAJAH</span><span id="scorePct">0%</span></div>
         <div class="score-track"><div class="score-fill" id="scoreFill" style="width:0%"></div></div>
       </div>
 
-      <div class="res-row"><span>Liveness</span><span id="resLive">—</span></div>
-      <div class="res-row"><span>Anti-Spoof</span><span id="resSpoof">—</span></div>
-      <div class="res-row"><span>Keyakinan</span><span id="resConf">—</span></div>
+      <div class="res-row"><span>LIVENESS</span><span id="resLive">—</span></div>
+      <div class="res-row"><span>ANTI-SPOOF</span><span id="resSpoof">—</span></div>
+      <div class="res-row"><span>KEYAKINAN</span><span id="resConf">—</span></div>
 
-      <button class="btn btn-outline" onclick="resetVerify()" style="margin-top:1rem">🔄 Verifikasi Lagi</button>
-      <button class="btn btn-primary" onclick="location.href='/register.html'" style="margin-top:.5rem">➕ Daftarkan Pengguna</button>
+      <button class="btn btn-outline" onclick="resetVerify()" style="margin-top:1rem">VERIFIKASI LAGI</button>
+      <button class="btn btn-primary" onclick="location.href='/register.html'" style="margin-top:.5rem">DAFTARKAN PENGGUNA</button>
     </div>
   </div>
 
@@ -220,11 +267,11 @@ input:focus { outline: none; border-color: var(--accent); }
 
       <video id="video" autoplay muted playsinline></video>
 
-      <svg id="camSvg" class="cam-svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
+      <svg id="camSvg" class="cam-svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid meet">
         <defs>
           <mask id="vm">
             <rect width="400" height="300" fill="white"/>
-            <ellipse cx="200" cy="142" rx="118" ry="138" fill="black"/>
+            <circle cx="200" cy="150" r="120" fill="black"/>
           </mask>
         </defs>
 
@@ -237,23 +284,23 @@ input:focus { outline: none; border-color: var(--accent); }
           <path d="M310 282 L310 270 L322 270"/>
         </g>
 
-        <ellipse id="ovalBorder" cx="200" cy="142" rx="118" ry="138"
-          fill="none" stroke="#475569" stroke-width="2.5"/>
+        <circle id="ovalBorder" cx="200" cy="150" r="120"
+          fill="none" stroke="#475569" stroke-width="2"/>
 
-        <ellipse id="arcEl" cx="200" cy="142" rx="118" ry="138"
-          fill="none" stroke="#10b981" stroke-width="5" stroke-linecap="round"
+        <circle id="arcEl" cx="200" cy="150" r="120"
+          fill="none" stroke="#00C2A8" stroke-width="4" stroke-linecap="round"
           pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"
-          transform="rotate(-90 200 142)" style="display:none"/>
+          transform="rotate(-90 200 150)" style="display:none"/>
 
-        <rect id="lblBg" x="130" y="263" width="140" height="24" rx="12" fill="rgba(0,0,0,0.65)"/>
-        <text id="lblTxt" x="200" y="279" text-anchor="middle"
-          font-family="Inter,system-ui,sans-serif" font-size="10.5" font-weight="600" fill="#94a3b8">
-          Posisikan wajah dalam oval
+        <rect id="lblBg" x="130" y="272" width="140" height="22" rx="2" fill="rgba(0,0,0,0.75)"/>
+        <text id="lblTxt" x="200" y="287" text-anchor="middle"
+          font-family="JetBrains Mono,monospace" font-size="10" font-weight="600" fill="#94a3b8">
+          Posisikan wajah dalam lingkaran
         </text>
 
-        <line id="scanLine" x1="82" x2="318" y1="142" y2="142"
-          stroke="rgba(59,130,246,0.5)" stroke-width="1.5" style="display:none">
-          <animateTransform attributeName="transform" type="translate" from="0,-130" to="0,130"
+        <line id="scanLine" x1="80" x2="320" y1="150" y2="150"
+          stroke="rgba(0,194,168,0.4)" stroke-width="1.5" style="display:none">
+          <animateTransform attributeName="transform" type="translate" from="0,-118" to="0,118"
             dur="1.8s" repeatCount="indefinite"/>
         </line>
       </svg>
@@ -261,7 +308,7 @@ input:focus { outline: none; border-color: var(--accent); }
       <!-- Processing -->
       <div class="overlay-abs ov-process" id="ovProcess">
         <div class="ring"></div>
-        <div style="color:var(--text);font-weight:600;font-size:.9rem" id="ovProcTxt">Memverifikasi wajah…</div>
+        <div style="color:var(--text);font-weight:600;font-size:.85rem;font-family:'JetBrains Mono',monospace;letter-spacing:.05em" id="ovProcTxt">Memverifikasi wajah…</div>
       </div>
 
       <!-- Result on camera -->
@@ -277,8 +324,8 @@ input:focus { outline: none; border-color: var(--accent); }
     <div class="cam-status" id="camStatus">Pilih mode dan isi data di sebelah kiri</div>
 
     <div class="cam-ctrl" id="camCtrl">
-      <button class="btn-sm btn-sm-p" id="btnManual">📸 Ambil Manual</button>
-      <button class="btn-sm btn-sm-o" id="btnCancel">Batal</button>
+      <button class="btn-sm btn-sm-p" id="btnManual">AMBIL MANUAL</button>
+      <button class="btn-sm btn-sm-o" id="btnCancel">BATAL</button>
     </div>
 
     <canvas id="capCanvas" style="display:none" width="1280" height="720"></canvas>

@@ -1,0 +1,1260 @@
+<!DOCTYPE html>
+<html lang="id">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>API Docs — FACEVERIFY</title>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500&display=swap">
+<style>
+/* ---- tokens ---- */
+:root {
+  --bg:      #03060C;
+  --bg2:     #0A1120;
+  --bg3:     #0D1526;
+  --border:  #152035;
+  --b2:      #1E2F47;
+  --fg:      #DDE8F5;
+  --fg2:     #7A91B0;
+  --fg3:     #3D5270;
+  --green:   #00C2A8;
+  --blue:    #00C2A8;
+  --purple:  #6366F1;
+  --amber:   #F59E0B;
+  --red:     #F43F5E;
+  --cyan:    #00C2A8;
+  --teal:    #00C2A8;
+  --teal-d:  rgba(0,194,168,.1);
+  color-scheme: dark;
+}
+
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
+html { scroll-behavior: smooth }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--bg);
+  background-image: radial-gradient(circle at 1px 1px, rgba(0,194,168,.04) 1px, transparent 0);
+  background-size: 28px 28px;
+  color: var(--fg);
+  font-size: 14px;
+  line-height: 1.6;
+  min-height: 100vh;
+}
+
+/* ---- Header ---- */
+header {
+  background: rgba(6,12,24,.92);
+  border-bottom: 1px solid var(--border);
+  backdrop-filter: blur(16px);
+  padding: 0 24px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  position: sticky;
+  top: 0;
+  z-index: 50;
+}
+.logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700;
+  font-size: 1rem;
+  text-decoration: none;
+  color: var(--fg);
+  letter-spacing: .04em;
+}
+.logo span { color: var(--fg) }
+.logo em    { color: var(--teal); font-style: normal }
+.header-nav { display: flex; gap: 2px; align-items: center }
+.header-nav a {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem; font-weight: 500;
+  color: var(--fg3); text-decoration: none;
+  padding: .35rem .65rem; border-radius: 3px;
+  letter-spacing: .06em; text-transform: uppercase;
+  transition: .12s;
+}
+.header-nav a:hover { background: var(--bg2); color: var(--fg) }
+.header-nav a.active { background: var(--teal-d); color: var(--teal) }
+
+/* ---- Layout ---- */
+.layout {
+  display: grid;
+  grid-template-columns: 230px 1fr;
+  max-width: 1200px;
+  margin: 0 auto;
+  min-height: calc(100vh - 56px);
+}
+
+/* ---- Sidebar ---- */
+aside {
+  position: sticky;
+  top: 52px;
+  height: calc(100vh - 52px);
+  overflow-y: auto;
+  border-right: 1px solid var(--border);
+  padding: 20px 0 32px;
+  background: var(--bg);
+}
+aside::-webkit-scrollbar { width: 3px }
+aside::-webkit-scrollbar-track { background: transparent }
+aside::-webkit-scrollbar-thumb { background: var(--b2) }
+.nav-section {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .64rem;
+  font-weight: 500;
+  color: var(--fg3);
+  text-transform: uppercase;
+  letter-spacing: .1em;
+  padding: 14px 16px 4px;
+}
+aside a {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 6px 14px;
+  color: var(--fg2);
+  text-decoration: none;
+  font-size: .78rem;
+  margin: 0 4px;
+  border-radius: 3px;
+  transition: .12s;
+}
+aside a:hover { background: var(--bg2); color: var(--fg) }
+aside a.active { background: var(--teal-d); color: var(--teal); font-weight: 500 }
+.nav-icon { font-size: .85rem; width: 16px; text-align: center; flex-shrink: 0 }
+
+/* ---- Content ---- */
+article {
+  padding: 36px 40px 60px;
+  min-width: 0;
+}
+
+/* ---- Page hero ---- */
+.hero {
+  margin-bottom: 40px;
+  padding-bottom: 28px;
+  border-bottom: 1px solid var(--border);
+}
+.hero-badge {
+  display: inline-flex;
+  align-items: center;
+  gap: .5rem;
+  background: var(--teal-d);
+  color: var(--teal);
+  border: 1px solid rgba(0,194,168,.2);
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem;
+  font-weight: 500;
+  letter-spacing: .1em;
+  text-transform: uppercase;
+  padding: 4px 12px;
+  border-radius: 2px;
+  margin-bottom: 12px;
+}
+.hero-badge::before {
+  content: '';
+  width: 5px; height: 5px;
+  border-radius: 50%;
+  background: var(--teal);
+  flex-shrink: 0;
+}
+.hero h1 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 2rem;
+  font-weight: 700;
+  letter-spacing: -.025em;
+  margin-bottom: 8px;
+  text-wrap: balance;
+}
+.hero p { color: var(--fg2); max-width: 600px; font-size: .9rem }
+
+/* ---- Section ---- */
+section { margin-bottom: 56px; scroll-margin-top: 72px }
+h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.15rem;
+  font-weight: 700;
+  margin-bottom: 16px;
+  padding-bottom: 10px;
+  border-bottom: 1px solid var(--border);
+}
+h3 {
+  font-size: .78rem;
+  font-weight: 600;
+  color: var(--fg3);
+  text-transform: uppercase;
+  letter-spacing: .06em;
+  margin: 20px 0 8px;
+}
+p { color: var(--fg2); margin-bottom: 12px; font-size: .88rem; line-height: 1.7 }
+p + p { margin-top: 0 }
+
+/* ---- Architecture box ---- */
+.arch {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 12px;
+  padding: 20px 24px;
+  margin: 14px 0;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem;
+  line-height: 2;
+  color: var(--fg2);
+  overflow-x: auto;
+}
+.arch .hi  { color: var(--green) }
+.arch .hi2 { color: var(--blue) }
+.arch .hi3 { color: var(--amber) }
+.arch .hi4 { color: var(--purple) }
+.arch .dim { color: var(--fg3) }
+
+/* ---- Callout ---- */
+.callout {
+  display: flex;
+  gap: 12px;
+  padding: 12px 16px;
+  border-radius: 10px;
+  margin: 14px 0;
+  font-size: .84rem;
+  line-height: 1.65;
+}
+.callout-info { background: rgba(0,194,168,.07);  border-left: 3px solid var(--teal) }
+.callout-tip  { background: rgba(0,194,168,.07);  border-left: 3px solid var(--teal) }
+.callout-warn { background: rgba(245,158,11,.07); border-left: 3px solid var(--amber) }
+.callout-icon { font-size: 1rem; flex-shrink: 0; margin-top: 1px }
+.callout-body { color: var(--fg2); min-width: 0 }
+.callout-body strong { color: var(--fg) }
+
+/* ---- Code ---- */
+.code-wrap { position: relative; margin: 10px 0 16px }
+.code-lang {
+  position: absolute; top: 10px; right: 44px;
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .68rem; color: var(--fg3);
+  text-transform: uppercase; letter-spacing: .06em;
+}
+.copy-btn {
+  position: absolute; top: 8px; right: 8px;
+  background: var(--bg3); border: 1px solid var(--border);
+  border-radius: 6px; color: var(--fg2);
+  font-size: .72rem; padding: 3px 8px;
+  cursor: pointer; transition: .12s; font-family: inherit;
+}
+.copy-btn:hover { background: var(--border); color: var(--fg) }
+pre {
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 0;
+  clip-path: polygon(0 0,calc(100% - 10px) 0,100% 10px,100% 100%,0 100%);
+  padding: 16px; overflow-x: auto; margin: 0;
+}
+code {
+  font-family: 'JetBrains Mono', monospace;
+  font-size: .78rem; line-height: 1.65; color: var(--fg);
+}
+.kw   { color: var(--purple) }
+.str  { color: var(--cyan) }
+.cmt  { color: var(--fg3) }
+.fn   { color: var(--blue) }
+.num  { color: var(--amber) }
+.type { color: var(--green) }
+.dec  { color: var(--teal) }
+
+/* ---- Tabs ---- */
+.tab-row {
+  display: flex; gap: 2px;
+  border-bottom: 1px solid var(--border);
+  margin-bottom: 16px; overflow-x: auto;
+}
+.tab-btn {
+  background: none; border: none;
+  border-bottom: 2px solid transparent;
+  color: var(--fg2); font-family: inherit; font-size: .82rem;
+  font-weight: 500; padding: 8px 14px; cursor: pointer;
+  white-space: nowrap; transition: .12s; margin-bottom: -1px;
+}
+.tab-btn:hover { color: var(--fg) }
+.tab-btn.active { color: var(--teal); border-bottom-color: var(--teal) }
+.tab-pane { display: none }
+.tab-pane.active { display: block }
+
+/* ---- Table ---- */
+.tbl-wrap { overflow-x: auto; margin: 12px 0 }
+table { width: 100%; border-collapse: collapse; font-size: .82rem }
+th {
+  text-align: left; padding: 8px 12px;
+  color: var(--fg3); font-weight: 500; font-size: .7rem;
+  text-transform: uppercase; letter-spacing: .06em;
+  border-bottom: 1px solid var(--border);
+}
+td { padding: 9px 12px; border-bottom: 1px solid rgba(255,255,255,.04); color: var(--fg2); vertical-align: top }
+tr:last-child td { border-bottom: none }
+td:first-child code { font-size: .74rem; background: var(--bg3); padding: 2px 6px; border-radius: 4px; color: var(--fg); white-space: nowrap }
+
+/* ---- Badge ---- */
+.badge { display:inline-block; font-size:.68rem; font-weight:700; padding:2px 7px; border-radius:2px; letter-spacing:.06em; font-family:'JetBrains Mono',monospace }
+.badge-get    { background:rgba(0,194,168,.12);   color:var(--teal) }
+.badge-post   { background:rgba(99,102,241,.12);  color:var(--purple) }
+.badge-delete { background:rgba(244,63,94,.1);    color:var(--red) }
+
+/* ---- Flow steps ---- */
+.steps { display:flex; flex-direction:column; gap:0; margin:12px 0 }
+.step { display:flex; gap:16px; padding:14px 0; border-bottom:1px solid var(--border) }
+.step:last-child { border-bottom:none }
+.step-num {
+  width:26px; height:26px; flex-shrink:0;
+  background:var(--teal); color:#000; border-radius:0;
+  clip-path:polygon(0 0,calc(100% - 5px) 0,100% 5px,100% 100%,5px 100%,0 calc(100% - 5px));
+  display:flex; align-items:center; justify-content:center;
+  font-family:'Space Grotesk',sans-serif; font-weight:700; font-size:.78rem;
+}
+.step-body { flex:1; min-width:0 }
+.step-title { font-weight:600; font-size:.88rem; margin-bottom:4px }
+.step-desc  { font-size:.82rem; color:var(--fg2) }
+
+/* ---- Platform pills ---- */
+.platform-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+  gap: 10px;
+  margin: 16px 0;
+}
+.platform-pill {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: 3px;
+  clip-path: polygon(0 0,calc(100% - 7px) 0,100% 7px,100% 100%,7px 100%,0 calc(100% - 7px));
+  padding: 12px 14px;
+  text-align: center;
+  cursor: pointer;
+  transition: .15s;
+}
+.platform-pill:hover, .platform-pill.active {
+  border-color: var(--teal);
+  background: var(--teal-d);
+}
+.platform-pill .pill-icon { font-size: 1.5rem; margin-bottom: 4px }
+.platform-pill .pill-name { font-size: .78rem; font-weight: 500; color: var(--fg2); font-family: 'JetBrains Mono', monospace; font-size: .68rem; letter-spacing: .06em; text-transform: uppercase }
+.platform-pill.active .pill-name { color: var(--teal) }
+
+/* ---- Responsive ---- */
+@media (max-width: 768px) {
+  .layout { grid-template-columns: 1fr }
+  aside {
+    position: static; height: auto;
+    border-right: none; border-bottom: 1px solid var(--border);
+    display: flex; flex-wrap: wrap; gap: 2px;
+    padding: 10px; overflow-x: auto;
+  }
+  .nav-section { display: none }
+  aside a { white-space: nowrap; padding: 5px 10px }
+  article { padding: 20px 16px 40px }
+  header { padding: 0 12px }
+  .header-nav a:not(.active) { display: none }
+}
+</style>
+</head>
+<body>
+
+<!-- Header -->
+<header>
+  <a href="/" class="logo"><em>FACE</em><span>VERIFY</span></a>
+  <nav class="header-nav">
+    <a href="/">Beranda</a>
+    <a href="/register.html">Daftar</a>
+    <a href="/verify.html">Verifikasi</a>
+    <a href="/presensi.html">Presensi</a>
+    <a href="/docs-integrasi.html" class="active">Integrasi</a>
+    <a href="/docs">API Docs</a>
+  </nav>
+</header>
+
+<div class="layout">
+
+<!-- Sidebar -->
+<aside id="sidebar">
+  <div class="nav-section">Overview</div>
+  <a href="#arsitektur" class="active"><span class="nav-icon">🏗️</span> Arsitektur</a>
+  <a href="#endpoints"><span class="nav-icon">🔌</span> Endpoint Headless</a>
+  <div class="nav-section">Backend</div>
+  <a href="#express"><span class="nav-icon">🟢</span> Express.js</a>
+  <div class="nav-section">Mobile</div>
+  <a href="#flutter"><span class="nav-icon">🐦</span> Flutter</a>
+  <a href="#android"><span class="nav-icon">🤖</span> Android (Kotlin)</a>
+  <a href="#swift"><span class="nav-icon">🍎</span> iOS (Swift)</a>
+  <div class="nav-section">Database</div>
+  <a href="#db-schema"><span class="nav-icon">🗄️</span> PostgreSQL Schema</a>
+  <a href="#supabase"><span class="nav-icon">⚡</span> Supabase</a>
+</aside>
+
+<!-- Article -->
+<article>
+
+  <!-- Hero -->
+  <div class="hero">
+    <div class="hero-badge">Panduan Integrasi</div>
+    <h1>Integrasikan Face API ke Stack Anda</h1>
+    <p>Python Face API ini berjalan sebagai <strong>AI microservice</strong>. Backend utama (Express.js) dan aplikasi mobile (Flutter / Android / iOS) tidak perlu tahu cara kerja AI-nya — cukup kirim foto, terima embedding atau hasil verifikasi.</p>
+  </div>
+
+  <!-- ===== ARSITEKTUR ===== -->
+  <section id="arsitektur">
+    <h2>🏗️ Arsitektur Microservice</h2>
+
+    <div class="arch">
+<span class="hi">Flutter / Android / iOS</span>
+       │  <span class="dim">kirim foto (multipart)</span>
+       ▼
+<span class="hi2">Express.js  ←── Backend Utama</span>  <span class="dim">(auth, JWT, bisnis)</span>
+   │          │
+   │          ├──▶ <span class="hi3">PostgreSQL / Supabase</span>  <span class="dim">(simpan embedding, presensi)</span>
+   │          │
+   └──────────▶ <span class="hi4">Python Face API</span>  <span class="dim">(AI saja: extract + compare)</span>
+                  <span class="dim">port 8080 — internal only, tidak terekspos</span>
+    </div>
+
+    <div class="callout callout-tip">
+      <div class="callout-icon">✅</div>
+      <div class="callout-body"><strong>Keuntungan:</strong> Python API tidak perlu dibuka ke internet. Mobile app hanya punya 1 backend URL. Embedding disimpan di database sendiri — bukan di SQLite Python.</div>
+    </div>
+
+    <h3>Alur Daftar Wajah</h3>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Mobile kirim foto ke Express.js</div><div class="step-desc">multipart/form-data, field <code>photo</code></div></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Express → <code>POST /api/extract-embedding</code></div><div class="step-desc">Python ekstrak 512-dim embedding + liveness check</div></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Express simpan embedding ke DB sendiri</div><div class="step-desc">Kolom <code>JSONB</code> atau <code>vector(512)</code> di PostgreSQL/Supabase</div></div></div>
+    </div>
+
+    <h3>Alur Presensi (1:N Identification)</h3>
+    <div class="steps">
+      <div class="step"><div class="step-num">1</div><div class="step-body"><div class="step-title">Mobile kirim foto ke Express.js</div><div class="step-desc">Sudah include liveness frame jika dibutuhkan</div></div></div>
+      <div class="step"><div class="step-num">2</div><div class="step-body"><div class="step-title">Express → <code>POST /api/extract-embedding</code></div><div class="step-desc">Python return embedding + <code>is_live</code> + <code>antispoof</code></div></div></div>
+      <div class="step"><div class="step-num">3</div><div class="step-body"><div class="step-title">Express query embedding semua karyawan dari DB</div><div class="step-desc">Loop → <code>POST /api/compare-embeddings</code> per user, atau pakai pgvector</div></div></div>
+      <div class="step"><div class="step-num">4</div><div class="step-body"><div class="step-title">Express catat presensi, balas mobile</div><div class="step-desc">Insert ke tabel <code>presensi</code>, return nama + waktu + similarity</div></div></div>
+    </div>
+  </section>
+
+  <!-- ===== ENDPOINTS ===== -->
+  <section id="endpoints">
+    <h2>🔌 Endpoint Headless (Khusus Integrasi)</h2>
+    <p>Dua endpoint ini tidak menyimpan data ke database Python — semua kontrol ada di backend Anda.</p>
+
+    <div class="tbl-wrap">
+    <table>
+      <thead><tr><th>Method</th><th>Endpoint</th><th>Deskripsi</th></tr></thead>
+      <tbody>
+        <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/extract-embedding</code></td><td>Ekstrak embedding 512-dim dari foto. Return embedding + liveness + antispoof. Tidak simpan ke DB.</td></tr>
+        <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/compare-embeddings</code></td><td>Bandingkan dua embedding. Input: JSON array float[512] × 2. Return similarity + is_match.</td></tr>
+        <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/register</code></td><td>Daftar + simpan ke SQLite Python (opsional, jika tidak mau urus DB sendiri)</td></tr>
+        <tr><td><span class="badge badge-post">POST</span></td><td><code>/api/presensi/masuk</code></td><td>Clock-in otomatis dengan 1:N di database Python</td></tr>
+      </tbody>
+    </table>
+    </div>
+
+    <h3>POST /api/extract-embedding</h3>
+    <div class="code-wrap">
+      <div class="code-lang">request</div>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="cmt"># Form fields (multipart/form-data):</span>
+image           <span class="type">File</span>      <span class="cmt"># upload file — atau pakai image_base64</span>
+image_base64    <span class="type">string</span>    <span class="cmt"># base64 / data URL</span>
+check_liveness  <span class="type">bool</span>      <span class="cmt"># default: true</span>
+</code></pre>
+    </div>
+    <div class="code-wrap">
+      <div class="code-lang">response</div>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>{
+  <span class="str">"success"</span>:   <span class="kw">true</span>,
+  <span class="str">"embedding"</span>: [<span class="num">0.021</span>, <span class="num">-0.134</span>, <span class="num">0.072</span>, ...],  <span class="cmt">// float[512] — simpan di DB Anda</span>
+  <span class="str">"face_info"</span>: {
+    <span class="str">"bbox"</span>: [<span class="num">120</span>, <span class="num">80</span>, <span class="num">380</span>, <span class="num">420</span>],
+    <span class="str">"det_score"</span>: <span class="num">0.98</span>,
+    <span class="str">"num_faces"</span>: <span class="num">1</span>
+  },
+  <span class="str">"is_live"</span>:   <span class="kw">true</span>,
+  <span class="str">"antispoof"</span>: { <span class="str">"score"</span>: <span class="num">0.82</span>, <span class="str">"passed"</span>: <span class="kw">true</span> }
+}
+</code></pre>
+    </div>
+
+    <h3>POST /api/compare-embeddings</h3>
+    <div class="code-wrap">
+      <div class="code-lang">request</div>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>embedding1   <span class="type">string</span>   <span class="cmt"># JSON.stringify(float[512])</span>
+embedding2   <span class="type">string</span>   <span class="cmt"># JSON.stringify(float[512])</span>
+threshold    <span class="type">float</span>    <span class="cmt"># default: 0.30</span>
+</code></pre>
+    </div>
+    <div class="code-wrap">
+      <div class="code-lang">response</div>
+      <button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>{
+  <span class="str">"success"</span>:        <span class="kw">true</span>,
+  <span class="str">"similarity"</span>:     <span class="num">0.6821</span>,
+  <span class="str">"similarity_pct"</span>: <span class="num">68.2</span>,
+  <span class="str">"is_match"</span>:       <span class="kw">true</span>,
+  <span class="str">"confidence"</span>:     <span class="str">"TINGGI"</span>,  <span class="cmt">// TINGGI / SEDANG / RENDAH / TIDAK_COCOK</span>
+  <span class="str">"threshold"</span>:      <span class="num">0.30</span>
+}
+</code></pre>
+    </div>
+  </section>
+
+  <!-- ===== EXPRESS ===== -->
+  <section id="express">
+    <h2>🟢 Express.js</h2>
+
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="tab(this,'ex-setup')">Setup</button>
+      <button class="tab-btn" onclick="tab(this,'ex-service')">faceService.js</button>
+      <button class="tab-btn" onclick="tab(this,'ex-daftar')">Daftar Wajah</button>
+      <button class="tab-btn" onclick="tab(this,'ex-presensi')">Presensi</button>
+    </div>
+
+    <div id="ex-setup" class="tab-pane active">
+      <div class="code-wrap"><div class="code-lang">bash</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>npm install express multer axios form-data pg dotenv
+</code></pre>
+      </div>
+      <div class="code-wrap"><div class="code-lang">.env</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>FACE_API_URL=http://localhost:8080   <span class="cmt"># internal — tidak terekspos ke internet</span>
+DATABASE_URL=postgresql://user:pass@localhost:5432/presensi
+PORT=3000
+</code></pre>
+      </div>
+    </div>
+
+    <div id="ex-service" class="tab-pane">
+      <div class="code-wrap"><div class="code-lang">javascript</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="cmt">// services/faceService.js</span>
+<span class="kw">const</span> axios    = <span class="fn">require</span>(<span class="str">'axios'</span>);
+<span class="kw">const</span> FormData = <span class="fn">require</span>(<span class="str">'form-data'</span>);
+<span class="kw">const</span> FACE_API = process.env.FACE_API_URL;
+
+<span class="kw">async function</span> <span class="fn">extractEmbedding</span>(imageBuffer, mime = <span class="str">'image/jpeg'</span>) {
+  <span class="kw">const</span> form = <span class="kw">new</span> <span class="fn">FormData</span>();
+  form.<span class="fn">append</span>(<span class="str">'image'</span>, imageBuffer, { filename: <span class="str">'face.jpg'</span>, contentType: mime });
+  form.<span class="fn">append</span>(<span class="str">'check_liveness'</span>, <span class="str">'true'</span>);
+  <span class="kw">const</span> { data } = <span class="kw">await</span> axios.<span class="fn">post</span>(<span class="str">`${FACE_API}/api/extract-embedding`</span>,
+    form, { headers: form.<span class="fn">getHeaders</span>(), timeout: <span class="num">15000</span> });
+  <span class="kw">if</span> (!data.success) <span class="kw">throw new</span> <span class="fn">Error</span>(data.error);
+  <span class="kw">return</span> data;
+}
+
+<span class="kw">async function</span> <span class="fn">compareEmbeddings</span>(emb1, emb2, threshold = <span class="num">0.30</span>) {
+  <span class="kw">const</span> form = <span class="kw">new</span> <span class="fn">FormData</span>();
+  form.<span class="fn">append</span>(<span class="str">'embedding1'</span>, <span class="type">JSON</span>.<span class="fn">stringify</span>(emb1));
+  form.<span class="fn">append</span>(<span class="str">'embedding2'</span>, <span class="type">JSON</span>.<span class="fn">stringify</span>(emb2));
+  form.<span class="fn">append</span>(<span class="str">'threshold'</span>,   <span class="type">String</span>(threshold));
+  <span class="kw">const</span> { data } = <span class="kw">await</span> axios.<span class="fn">post</span>(<span class="str">`${FACE_API}/api/compare-embeddings`</span>,
+    form, { headers: form.<span class="fn">getHeaders</span>(), timeout: <span class="num">5000</span> });
+  <span class="kw">if</span> (!data.success) <span class="kw">throw new</span> <span class="fn">Error</span>(data.error);
+  <span class="kw">return</span> data;
+}
+
+module.exports = { extractEmbedding, compareEmbeddings };
+</code></pre>
+      </div>
+    </div>
+
+    <div id="ex-daftar" class="tab-pane">
+      <div class="code-wrap"><div class="code-lang">javascript</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="cmt">// POST /karyawan/daftar</span>
+router.<span class="fn">post</span>(<span class="str">'/daftar'</span>, upload.<span class="fn">single</span>(<span class="str">'photo'</span>), <span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> { user_id, name, email } = req.body;
+  <span class="kw">try</span> {
+    <span class="kw">const</span> ext = <span class="kw">await</span> face.<span class="fn">extractEmbedding</span>(req.file.buffer);
+    <span class="kw">if</span> (!ext.is_live)
+      <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ ok: <span class="kw">false</span>, error: <span class="str">'Gunakan wajah asli'</span> });
+
+    <span class="kw">await</span> pool.<span class="fn">query</span>(
+      <span class="str">`INSERT INTO karyawan(user_id,name,email,embedding)
+       VALUES($1,$2,$3,$4)
+       ON CONFLICT(user_id) DO UPDATE SET embedding=$4, updated_at=NOW()`</span>,
+      [user_id, name, email, <span class="type">JSON</span>.<span class="fn">stringify</span>(ext.embedding)]
+    );
+    res.<span class="fn">json</span>({ ok: <span class="kw">true</span>, message: <span class="str">`Wajah ${name} berhasil didaftarkan`</span> });
+  } <span class="kw">catch</span> (e) {
+    res.<span class="fn">status</span>(<span class="num">500</span>).<span class="fn">json</span>({ ok: <span class="kw">false</span>, error: e.message });
+  }
+});
+</code></pre>
+      </div>
+    </div>
+
+    <div id="ex-presensi" class="tab-pane">
+      <div class="code-wrap"><div class="code-lang">javascript</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="cmt">// POST /presensi/:tipe  (masuk | keluar)</span>
+router.<span class="fn">post</span>(<span class="str">'/:tipe(masuk|keluar)'</span>, upload.<span class="fn">single</span>(<span class="str">'photo'</span>), <span class="kw">async</span> (req, res) => {
+  <span class="kw">const</span> { tipe } = req.params;
+  <span class="kw">const</span> ext = <span class="kw">await</span> face.<span class="fn">extractEmbedding</span>(req.file.buffer);
+  <span class="kw">if</span> (!ext.is_live)
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">400</span>).<span class="fn">json</span>({ ok: <span class="kw">false</span>, error: <span class="str">'Liveness gagal'</span> });
+
+  <span class="kw">const</span> { rows } = <span class="kw">await</span> pool.<span class="fn">query</span>(
+    <span class="str">'SELECT user_id, name, embedding FROM karyawan WHERE is_active=true'</span>
+  );
+
+  <span class="kw">let</span> best = <span class="kw">null</span>, bestSim = <span class="num">0</span>;
+  <span class="kw">for</span> (<span class="kw">const</span> row <span class="kw">of</span> rows) {
+    <span class="kw">const</span> cmp = <span class="kw">await</span> face.<span class="fn">compareEmbeddings</span>(ext.embedding, <span class="type">JSON</span>.<span class="fn">parse</span>(row.embedding));
+    <span class="kw">if</span> (cmp.similarity > bestSim) { bestSim = cmp.similarity; best = { ...row, ...cmp }; }
+  }
+  <span class="kw">if</span> (!best?.is_match)
+    <span class="kw">return</span> res.<span class="fn">status</span>(<span class="num">404</span>).<span class="fn">json</span>({ ok: <span class="kw">false</span>, error: <span class="str">'Wajah tidak dikenali'</span> });
+
+  <span class="kw">await</span> pool.<span class="fn">query</span>(
+    <span class="str">'INSERT INTO presensi(user_id,tipe,similarity,waktu) VALUES($1,$2,$3,NOW())'</span>,
+    [best.user_id, tipe, best.similarity]
+  );
+  res.<span class="fn">json</span>({ ok: <span class="kw">true</span>, name: best.name, similarity_pct: best.similarity_pct });
+});
+</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== FLUTTER ===== -->
+  <section id="flutter">
+    <h2>🐦 Flutter</h2>
+
+    <div class="callout callout-info">
+      <div class="callout-icon">ℹ️</div>
+      <div class="callout-body">Flutter memanggil <strong>Express.js</strong>, bukan Python langsung. Paket kamera yang digunakan: <code>camera</code> (live preview) + <code>image_picker</code> (galeri/kamera cepat).</div>
+    </div>
+
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="tab(this,'fl-dep')">pubspec.yaml</button>
+      <button class="tab-btn" onclick="tab(this,'fl-service')">face_service.dart</button>
+      <button class="tab-btn" onclick="tab(this,'fl-daftar')">Daftar Wajah</button>
+      <button class="tab-btn" onclick="tab(this,'fl-presensi')">Presensi Screen</button>
+      <button class="tab-btn" onclick="tab(this,'fl-perm')">Permissions</button>
+    </div>
+
+    <div id="fl-dep" class="tab-pane active">
+      <div class="code-wrap"><div class="code-lang">yaml</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="cmt"># pubspec.yaml</span>
+dependencies:
+  flutter:
+    sdk: flutter
+  <span class="str">http</span>: ^1.2.1
+  <span class="str">camera</span>: ^0.11.0
+  <span class="str">image_picker</span>: ^1.1.2
+  <span class="str">permission_handler</span>: ^11.3.1
+  <span class="str">path_provider</span>: ^2.1.3
+  <span class="str">dio</span>: ^5.6.0          <span class="cmt"># alternatif http — lebih mudah untuk multipart</span>
+  <span class="str">flutter_secure_storage</span>: ^9.2.2  <span class="cmt"># simpan JWT token</span>
+  <span class="str">provider</span>: ^6.1.2     <span class="cmt"># state management</span>
+</code></pre>
+      </div>
+    </div>
+
+    <div id="fl-service" class="tab-pane">
+      <div class="code-wrap"><div class="code-lang">dart</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="cmt">// lib/services/face_service.dart</span>
+<span class="kw">import</span> <span class="str">'dart:io'</span>;
+<span class="kw">import</span> <span class="str">'package:dio/dio.dart'</span>;
+
+<span class="kw">class</span> <span class="type">PresensiResult</span> {
+  <span class="kw">final bool</span>   ok;
+  <span class="kw">final</span> <span class="type">String</span>? name;
+  <span class="kw">final double</span>? similarityPct;
+  <span class="kw">final</span> <span class="type">String</span>? waktu;
+  <span class="kw">final</span> <span class="type">String</span>? error;
+
+  <span class="type">PresensiResult</span>({
+    <span class="kw">required this</span>.ok, <span class="kw">this</span>.name, <span class="kw">this</span>.similarityPct,
+    <span class="kw">this</span>.waktu, <span class="kw">this</span>.error,
+  });
+
+  <span class="kw">factory</span> <span class="type">PresensiResult</span>.<span class="fn">fromJson</span>(<span class="type">Map</span>&lt;<span class="type">String</span>, <span class="kw">dynamic</span>&gt; j) =&gt; <span class="type">PresensiResult</span>(
+    ok:            j[<span class="str">'ok'</span>] ?? <span class="kw">false</span>,
+    name:          j[<span class="str">'name'</span>],
+    similarityPct: (j[<span class="str">'similarity_pct'</span>] <span class="kw">as num</span>?)?.toDouble(),
+    waktu:         j[<span class="str">'waktu'</span>],
+    error:         j[<span class="str">'error'</span>],
+  );
+}
+
+<span class="kw">class</span> <span class="type">DaftarResult</span> {
+  <span class="kw">final bool</span> ok;
+  <span class="kw">final</span> <span class="type">String</span>? message;
+  <span class="kw">final</span> <span class="type">String</span>? error;
+  <span class="type">DaftarResult</span>({<span class="kw">required this</span>.ok, <span class="kw">this</span>.message, <span class="kw">this</span>.error});
+  <span class="kw">factory</span> <span class="type">DaftarResult</span>.<span class="fn">fromJson</span>(<span class="type">Map</span> j) =&gt;
+    <span class="type">DaftarResult</span>(ok: j[<span class="str">'ok'</span>] ?? <span class="kw">false</span>, message: j[<span class="str">'message'</span>], error: j[<span class="str">'error'</span>]);
+}
+
+<span class="kw">class</span> <span class="type">FaceService</span> {
+  <span class="kw">static const</span> _base = <span class="str">'https://your-express-api.com'</span>;  <span class="cmt">// ganti URL Express.js</span>
+  <span class="kw">static final</span> _dio = <span class="type">Dio</span>(<span class="type">BaseOptions</span>(
+    baseUrl:        _base,
+    connectTimeout: <span class="kw">const</span> <span class="type">Duration</span>(seconds: <span class="num">10</span>),
+    receiveTimeout: <span class="kw">const</span> <span class="type">Duration</span>(seconds: <span class="num">30</span>),
+  ));
+
+  <span class="cmt">// --- Daftar wajah baru ---</span>
+  <span class="kw">static Future</span>&lt;<span class="type">DaftarResult</span>&gt; <span class="fn">daftarWajah</span>({
+    <span class="kw">required</span> <span class="type">File</span> photo,
+    <span class="kw">required</span> <span class="type">String</span> userId,
+    <span class="kw">required</span> <span class="type">String</span> name,
+    <span class="type">String</span>? email,
+  }) <span class="kw">async</span> {
+    <span class="kw">final</span> form = <span class="type">FormData</span>.<span class="fn">fromMap</span>({
+      <span class="str">'user_id'</span>: userId,
+      <span class="str">'name'</span>:    name,
+      <span class="kw">if</span> (email != <span class="kw">null</span>) <span class="str">'email'</span>: email,
+      <span class="str">'photo'</span>: <span class="kw">await</span> <span class="type">MultipartFile</span>.<span class="fn">fromFile</span>(
+        photo.path, filename: <span class="str">'face.jpg'</span>,
+        contentType: <span class="type">DioMediaType</span>(<span class="str">'image'</span>, <span class="str">'jpeg'</span>),
+      ),
+    });
+    <span class="kw">final</span> res = <span class="kw">await</span> _dio.<span class="fn">post</span>(<span class="str">'/karyawan/daftar'</span>, data: form);
+    <span class="kw">return</span> <span class="type">DaftarResult</span>.<span class="fn">fromJson</span>(res.data);
+  }
+
+  <span class="cmt">// --- Presensi masuk / keluar ---</span>
+  <span class="kw">static Future</span>&lt;<span class="type">PresensiResult</span>&gt; <span class="fn">presensi</span>({
+    <span class="kw">required</span> <span class="type">File</span> photo,
+    <span class="kw">required</span> <span class="type">String</span> tipe,  <span class="cmt">// 'masuk' | 'keluar'</span>
+    <span class="type">String</span>? deviceId,
+    <span class="type">String</span>? location,
+  }) <span class="kw">async</span> {
+    <span class="kw">final</span> form = <span class="type">FormData</span>.<span class="fn">fromMap</span>({
+      <span class="str">'photo'</span>: <span class="kw">await</span> <span class="type">MultipartFile</span>.<span class="fn">fromFile</span>(
+        photo.path, filename: <span class="str">'face.jpg'</span>,
+        contentType: <span class="type">DioMediaType</span>(<span class="str">'image'</span>, <span class="str">'jpeg'</span>),
+      ),
+      <span class="kw">if</span> (deviceId != <span class="kw">null</span>) <span class="str">'device_id'</span>: deviceId,
+      <span class="kw">if</span> (location != <span class="kw">null</span>) <span class="str">'location'</span>:  location,
+    });
+    <span class="kw">final</span> res = <span class="kw">await</span> _dio.<span class="fn">post</span>(<span class="str">'/presensi/$tipe'</span>, data: form);
+    <span class="kw">return</span> <span class="type">PresensiResult</span>.<span class="fn">fromJson</span>(res.data);
+  }
+}
+</code></pre>
+      </div>
+    </div>
+
+    <div id="fl-daftar" class="tab-pane">
+      <div class="code-wrap"><div class="code-lang">dart</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="cmt">// lib/screens/daftar_screen.dart</span>
+<span class="kw">import</span> <span class="str">'dart:io'</span>;
+<span class="kw">import</span> <span class="str">'package:flutter/material.dart'</span>;
+<span class="kw">import</span> <span class="str">'package:image_picker/image_picker.dart'</span>;
+<span class="kw">import</span> <span class="str">'../services/face_service.dart'</span>;
+
+<span class="kw">class</span> <span class="type">DaftarScreen</span> <span class="kw">extends</span> <span class="type">StatefulWidget</span> {
+  <span class="kw">const</span> <span class="type">DaftarScreen</span>({<span class="kw">super</span>.key});
+  <span class="fn">@override</span>
+  <span class="type">State</span>&lt;<span class="type">DaftarScreen</span>&gt; <span class="fn">createState</span>() =&gt; _<span class="type">DaftarScreenState</span>();
+}
+
+<span class="kw">class</span> _<span class="type">DaftarScreenState</span> <span class="kw">extends</span> <span class="type">State</span>&lt;<span class="type">DaftarScreen</span>&gt; {
+  <span class="kw">final</span> _ctrlName   = <span class="type">TextEditingController</span>();
+  <span class="kw">final</span> _ctrlUserId = <span class="type">TextEditingController</span>();
+  <span class="kw">final</span> _ctrlEmail  = <span class="type">TextEditingController</span>();
+  <span class="type">File</span>? _photo;
+  <span class="kw">bool</span>  _loading = <span class="kw">false</span>;
+  <span class="type">String</span>? _msg;
+
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">_ambilFoto</span>() <span class="kw">async</span> {
+    <span class="kw">final</span> picked = <span class="kw">await</span> <span class="type">ImagePicker</span>().<span class="fn">pickImage</span>(
+      source: <span class="type">ImageSource</span>.camera,
+      preferredCameraDevice: <span class="type">CameraDevice</span>.front,
+      imageQuality: <span class="num">90</span>,
+    );
+    <span class="kw">if</span> (picked != <span class="kw">null</span>) <span class="fn">setState</span>(() =&gt; _photo = <span class="type">File</span>(picked.path));
+  }
+
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">_daftar</span>() <span class="kw">async</span> {
+    <span class="kw">if</span> (_photo == <span class="kw">null</span>) <span class="kw">return</span>;
+    <span class="fn">setState</span>(() { _loading = <span class="kw">true</span>; _msg = <span class="kw">null</span>; });
+    <span class="kw">try</span> {
+      <span class="kw">final</span> res = <span class="kw">await</span> <span class="type">FaceService</span>.<span class="fn">daftarWajah</span>(
+        photo:  _photo!,
+        userId: _ctrlUserId.text.<span class="fn">trim</span>(),
+        name:   _ctrlName.text.<span class="fn">trim</span>(),
+        email:  _ctrlEmail.text.<span class="fn">trim</span>(),
+      );
+      <span class="fn">setState</span>(() =&gt; _msg = res.ok ? <span class="str">'✅ ${res.message}'</span> : <span class="str">'❌ ${res.error}'</span>);
+    } <span class="kw">catch</span> (e) {
+      <span class="fn">setState</span>(() =&gt; _msg = <span class="str">'Error: $e'</span>);
+    } <span class="kw">finally</span> {
+      <span class="fn">setState</span>(() =&gt; _loading = <span class="kw">false</span>);
+    }
+  }
+
+  <span class="fn">@override</span>
+  <span class="type">Widget</span> <span class="fn">build</span>(<span class="type">BuildContext</span> context) =&gt; <span class="type">Scaffold</span>(
+    appBar: <span class="type">AppBar</span>(title: <span class="kw">const</span> <span class="type">Text</span>(<span class="str">'Daftar Wajah'</span>)),
+    body: <span class="type">Padding</span>(
+      padding: <span class="kw">const</span> <span class="type">EdgeInsets</span>.<span class="fn">all</span>(<span class="num">20</span>),
+      child: <span class="type">Column</span>(children: [
+        <span class="type">TextField</span>(controller: _ctrlUserId, decoration: <span class="kw">const</span> <span class="type">InputDecoration</span>(labelText: <span class="str">'User ID / NIP'</span>)),
+        <span class="kw">const</span> <span class="type">SizedBox</span>(height: <span class="num">12</span>),
+        <span class="type">TextField</span>(controller: _ctrlName,   decoration: <span class="kw">const</span> <span class="type">InputDecoration</span>(labelText: <span class="str">'Nama Lengkap'</span>)),
+        <span class="kw">const</span> <span class="type">SizedBox</span>(height: <span class="num">12</span>),
+        <span class="type">TextField</span>(controller: _ctrlEmail,  decoration: <span class="kw">const</span> <span class="type">InputDecoration</span>(labelText: <span class="str">'Email (opsional)'</span>)),
+        <span class="kw">const</span> <span class="type">SizedBox</span>(height: <span class="num">20</span>),
+        <span class="type">GestureDetector</span>(
+          onTap: _ambilFoto,
+          child: _photo != <span class="kw">null</span>
+            ? <span class="type">ClipOval</span>(child: <span class="type">Image</span>.<span class="fn">file</span>(_photo!, width: <span class="num">120</span>, height: <span class="num">120</span>, fit: <span class="type">BoxFit</span>.cover))
+            : <span class="type">Container</span>(
+                width: <span class="num">120</span>, height: <span class="num">120</span>,
+                decoration: <span class="type">BoxDecoration</span>(
+                  shape: <span class="type">BoxShape</span>.circle,
+                  border: <span class="type">Border</span>.<span class="fn">all</span>(color: <span class="type">Colors</span>.grey),
+                ),
+                child: <span class="kw">const</span> <span class="type">Icon</span>(<span class="type">Icons</span>.camera_alt, size: <span class="num">40</span>),
+              ),
+        ),
+        <span class="kw">const</span> <span class="type">SizedBox</span>(height: <span class="num">20</span>),
+        <span class="type">SizedBox</span>(width: <span class="kw">double</span>.infinity,
+          child: <span class="type">ElevatedButton</span>(
+            onPressed: _loading ? <span class="kw">null</span> : _daftar,
+            child: _loading
+              ? <span class="kw">const</span> <span class="type">CircularProgressIndicator</span>()
+              : <span class="kw">const</span> <span class="type">Text</span>(<span class="str">'Daftarkan Wajah'</span>),
+          ),
+        ),
+        <span class="kw">if</span> (_msg != <span class="kw">null</span>) ...[
+          <span class="kw">const</span> <span class="type">SizedBox</span>(height: <span class="num">16</span>),
+          <span class="type">Text</span>(_msg!, textAlign: <span class="type">TextAlign</span>.center),
+        ],
+      ]),
+    ),
+  );
+}
+</code></pre>
+      </div>
+    </div>
+
+    <div id="fl-presensi" class="tab-pane">
+      <div class="code-wrap"><div class="code-lang">dart</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="cmt">// lib/screens/presensi_screen.dart</span>
+<span class="kw">import</span> <span class="str">'dart:io'</span>;
+<span class="kw">import</span> <span class="str">'package:flutter/material.dart'</span>;
+<span class="kw">import</span> <span class="str">'package:image_picker/image_picker.dart'</span>;
+<span class="kw">import</span> <span class="str">'../services/face_service.dart'</span>;
+
+<span class="kw">class</span> <span class="type">PresensiScreen</span> <span class="kw">extends</span> <span class="type">StatefulWidget</span> {
+  <span class="kw">const</span> <span class="type">PresensiScreen</span>({<span class="kw">super</span>.key});
+  <span class="fn">@override</span>
+  <span class="type">State</span>&lt;<span class="type">PresensiScreen</span>&gt; <span class="fn">createState</span>() =&gt; _<span class="type">PresensiScreenState</span>();
+}
+
+<span class="kw">class</span> _<span class="type">PresensiScreenState</span> <span class="kw">extends</span> <span class="type">State</span>&lt;<span class="type">PresensiScreen</span>&gt; {
+  <span class="kw">bool</span>           _loading = <span class="kw">false</span>;
+  <span class="type">PresensiResult</span>? _result;
+  <span class="type">String</span>?        _selectedTipe = <span class="str">'masuk'</span>;
+
+  <span class="kw">Future</span>&lt;<span class="kw">void</span>&gt; <span class="fn">_jalankanPresensi</span>() <span class="kw">async</span> {
+    <span class="kw">final</span> picked = <span class="kw">await</span> <span class="type">ImagePicker</span>().<span class="fn">pickImage</span>(
+      source: <span class="type">ImageSource</span>.camera,
+      preferredCameraDevice: <span class="type">CameraDevice</span>.front,
+      imageQuality: <span class="num">90</span>,
+    );
+    <span class="kw">if</span> (picked == <span class="kw">null</span>) <span class="kw">return</span>;
+
+    <span class="fn">setState</span>(() { _loading = <span class="kw">true</span>; _result = <span class="kw">null</span>; });
+    <span class="kw">try</span> {
+      <span class="kw">final</span> res = <span class="kw">await</span> <span class="type">FaceService</span>.<span class="fn">presensi</span>(
+        photo: <span class="type">File</span>(picked.path),
+        tipe:  _selectedTipe!,
+      );
+      <span class="fn">setState</span>(() =&gt; _result = res);
+    } <span class="kw">catch</span> (e) {
+      <span class="fn">setState</span>(() =&gt; _result = <span class="type">PresensiResult</span>(ok: <span class="kw">false</span>, error: e.<span class="fn">toString</span>()));
+    } <span class="kw">finally</span> {
+      <span class="fn">setState</span>(() =&gt; _loading = <span class="kw">false</span>);
+    }
+  }
+
+  <span class="fn">@override</span>
+  <span class="type">Widget</span> <span class="fn">build</span>(<span class="type">BuildContext</span> context) {
+    <span class="kw">final</span> res = _result;
+    <span class="kw">return</span> <span class="type">Scaffold</span>(
+      appBar: <span class="type">AppBar</span>(title: <span class="kw">const</span> <span class="type">Text</span>(<span class="str">'Presensi Wajah'</span>)),
+      body: <span class="type">Padding</span>(
+        padding: <span class="kw">const</span> <span class="type">EdgeInsets</span>.<span class="fn">all</span>(<span class="num">24</span>),
+        child: <span class="type">Column</span>(
+          mainAxisAlignment: <span class="type">MainAxisAlignment</span>.center,
+          children: [
+            <span class="cmt">// Pilih tipe masuk / keluar</span>
+            <span class="type">SegmentedButton</span>&lt;<span class="type">String</span>&gt;(
+              segments: <span class="kw">const</span> [
+                <span class="type">ButtonSegment</span>(value: <span class="str">'masuk'</span>,  label: <span class="type">Text</span>(<span class="str">'Masuk'</span>),  icon: <span class="type">Icon</span>(<span class="type">Icons</span>.login)),
+                <span class="type">ButtonSegment</span>(value: <span class="str">'keluar'</span>, label: <span class="type">Text</span>(<span class="str">'Keluar'</span>), icon: <span class="type">Icon</span>(<span class="type">Icons</span>.logout)),
+              ],
+              selected: {_selectedTipe!},
+              onSelectionChanged: (s) =&gt; <span class="fn">setState</span>(() =&gt; _selectedTipe = s.first),
+            ),
+            <span class="kw">const</span> <span class="type">SizedBox</span>(height: <span class="num">32</span>),
+
+            <span class="cmt">// Tombol ambil foto & proses</span>
+            <span class="type">SizedBox</span>(
+              width: <span class="num">180</span>, height: <span class="num">180</span>,
+              child: <span class="type">ElevatedButton</span>(
+                onPressed: _loading ? <span class="kw">null</span> : _jalankanPresensi,
+                style: <span class="type">ElevatedButton</span>.<span class="fn">styleFrom</span>(shape: <span class="kw">const</span> <span class="type">CircleBorder</span>()),
+                child: _loading
+                  ? <span class="kw">const</span> <span class="type">CircularProgressIndicator</span>(color: <span class="type">Colors</span>.white)
+                  : <span class="type">Column</span>(mainAxisAlignment: <span class="type">MainAxisAlignment</span>.center, children: [
+                      <span class="kw">const</span> <span class="type">Icon</span>(<span class="type">Icons</span>.face, size: <span class="num">56</span>),
+                      <span class="type">Text</span>(_selectedTipe == <span class="str">'masuk'</span> ? <span class="str">'Tap Masuk'</span> : <span class="str">'Tap Keluar'</span>),
+                    ]),
+              ),
+            ),
+            <span class="kw">const</span> <span class="type">SizedBox</span>(height: <span class="num">32</span>),
+
+            <span class="cmt">// Hasil</span>
+            <span class="kw">if</span> (res != <span class="kw">null</span>)
+              <span class="type">Card</span>(
+                color: res.ok ? <span class="type">Colors</span>.green.shade900 : <span class="type">Colors</span>.red.shade900,
+                shape: <span class="type">RoundedRectangleBorder</span>(borderRadius: <span class="type">BorderRadius</span>.<span class="fn">circular</span>(<span class="num">16</span>)),
+                child: <span class="type">Padding</span>(
+                  padding: <span class="kw">const</span> <span class="type">EdgeInsets</span>.<span class="fn">all</span>(<span class="num">20</span>),
+                  child: <span class="type">Column</span>(children: [
+                    <span class="type">Text</span>(res.ok ? <span class="str">'✅ ${res.name}'</span> : <span class="str">'❌ ${res.error}'</span>,
+                      style: <span class="kw">const</span> <span class="type">TextStyle</span>(fontSize: <span class="num">18</span>, fontWeight: <span class="type">FontWeight</span>.bold, color: <span class="type">Colors</span>.white)),
+                    <span class="kw">if</span> (res.ok) ...[
+                      <span class="kw">const</span> <span class="type">SizedBox</span>(height: <span class="num">8</span>),
+                      <span class="type">Text</span>(<span class="str">'Kecocokan: ${res.similarityPct?.toStringAsFixed(1)}%'</span>,
+                        style: <span class="kw">const</span> <span class="type">TextStyle</span>(color: <span class="type">Colors</span>.white70)),
+                      <span class="type">Text</span>(<span class="str">'Waktu: ${res.waktu}'</span>,
+                        style: <span class="kw">const</span> <span class="type">TextStyle</span>(color: <span class="type">Colors</span>.white70)),
+                    ],
+                  ]),
+                ),
+              ),
+          ],
+        ),
+      ),
+    );
+  }
+}
+</code></pre>
+      </div>
+    </div>
+
+    <div id="fl-perm" class="tab-pane">
+      <div class="code-wrap"><div class="code-lang">xml — AndroidManifest.xml</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="cmt">&lt;!-- android/app/src/main/AndroidManifest.xml --&gt;</span>
+&lt;<span class="type">uses-permission</span> android:name=<span class="str">"android.permission.CAMERA"</span>/&gt;
+&lt;<span class="type">uses-permission</span> android:name=<span class="str">"android.permission.INTERNET"</span>/&gt;
+&lt;<span class="type">uses-feature</span> android:name=<span class="str">"android.hardware.camera"</span>/&gt;
+</code></pre>
+      <div style="height:12px"></div></div>
+      <div class="code-wrap"><div class="code-lang">plist — Info.plist (iOS)</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="cmt">&lt;!-- ios/Runner/Info.plist --&gt;</span>
+&lt;<span class="type">key</span>&gt;NSCameraUsageDescription&lt;/<span class="type">key</span>&gt;
+&lt;<span class="str">string</span>&gt;Kamera digunakan untuk presensi wajah&lt;/<span class="str">string</span>&gt;
+&lt;<span class="type">key</span>&gt;NSPhotoLibraryUsageDescription&lt;/<span class="type">key</span>&gt;
+&lt;<span class="str">string</span>&gt;Akses galeri untuk foto profil&lt;/<span class="str">string</span>&gt;
+</code></pre>
+      </div>
+      <div class="code-wrap"><div class="code-lang">dart — request permission</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="kw">import</span> <span class="str">'package:permission_handler/permission_handler.dart'</span>;
+
+<span class="kw">Future</span>&lt;<span class="kw">bool</span>&gt; <span class="fn">requestCamera</span>() <span class="kw">async</span> {
+  <span class="kw">final</span> status = <span class="kw">await</span> <span class="type">Permission</span>.camera.<span class="fn">request</span>();
+  <span class="kw">return</span> status.<span class="fn">isGranted</span>;
+}
+</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== ANDROID ===== -->
+  <section id="android">
+    <h2>🤖 Android Studio (Kotlin)</h2>
+
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="tab(this,'and-dep')">build.gradle</button>
+      <button class="tab-btn" onclick="tab(this,'and-service')">FaceService.kt</button>
+      <button class="tab-btn" onclick="tab(this,'and-vm')">ViewModel</button>
+    </div>
+
+    <div id="and-dep" class="tab-pane active">
+      <div class="code-wrap"><div class="code-lang">groovy</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code>dependencies {
+    implementation <span class="str">'com.squareup.retrofit2:retrofit:2.11.0'</span>
+    implementation <span class="str">'com.squareup.retrofit2:converter-gson:2.11.0'</span>
+    implementation <span class="str">'com.squareup.okhttp3:logging-interceptor:4.12.0'</span>
+    implementation <span class="str">'androidx.camera:camera-camera2:1.3.4'</span>
+    implementation <span class="str">'androidx.camera:camera-lifecycle:1.3.4'</span>
+    implementation <span class="str">'androidx.camera:camera-view:1.3.4'</span>
+    implementation <span class="str">'androidx.lifecycle:lifecycle-viewmodel-ktx:2.8.3'</span>
+}
+</code></pre>
+      </div>
+    </div>
+
+    <div id="and-service" class="tab-pane">
+      <div class="code-wrap"><div class="code-lang">kotlin</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="cmt">// data/ExpressApi.kt</span>
+<span class="kw">interface</span> <span class="type">ExpressApi</span> {
+    <span class="fn">@Multipart</span> <span class="fn">@POST</span>(<span class="str">"karyawan/daftar"</span>)
+    <span class="kw">suspend fun</span> <span class="fn">daftar</span>(
+        <span class="fn">@Part</span>(<span class="str">"user_id"</span>) userId: <span class="type">RequestBody</span>,
+        <span class="fn">@Part</span>(<span class="str">"name"</span>)    name:   <span class="type">RequestBody</span>,
+        <span class="fn">@Part</span>           photo:  <span class="type">MultipartBody</span>.<span class="type">Part</span>
+    ): <span class="type">Response</span>&lt;<span class="type">ApiResult</span>&gt;
+
+    <span class="fn">@Multipart</span> <span class="fn">@POST</span>(<span class="str">"presensi/{tipe}"</span>)
+    <span class="kw">suspend fun</span> <span class="fn">presensi</span>(
+        <span class="fn">@Path</span>(<span class="str">"tipe"</span>) tipe:  <span class="type">String</span>,
+        <span class="fn">@Part</span>          photo: <span class="type">MultipartBody</span>.<span class="type">Part</span>
+    ): <span class="type">Response</span>&lt;<span class="type">PresensiResult</span>&gt;
+}
+
+<span class="kw">data class</span> <span class="type">PresensiResult</span>(
+    <span class="kw">val</span> ok:            <span class="type">Boolean</span>,
+    <span class="kw">val</span> name:          <span class="type">String</span>?,
+    <span class="kw">val</span> similarity_pct: <span class="type">Double</span>?,
+    <span class="kw">val</span> waktu:          <span class="type">String</span>?,
+    <span class="kw">val</span> error:          <span class="type">String</span>?
+)
+</code></pre>
+      </div>
+    </div>
+
+    <div id="and-vm" class="tab-pane">
+      <div class="code-wrap"><div class="code-lang">kotlin</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="kw">class</span> <span class="type">PresensiViewModel</span> : <span class="type">ViewModel</span>() {
+    <span class="kw">val</span> result = <span class="type">MutableLiveData</span>&lt;<span class="type">PresensiResult</span>?&gt;()
+    <span class="kw">val</span> loading = <span class="type">MutableLiveData</span>(<span class="kw">false</span>)
+
+    <span class="kw">fun</span> <span class="fn">presensi</span>(bitmap: <span class="type">Bitmap</span>, tipe: <span class="type">String</span>) = viewModelScope.<span class="fn">launch</span> {
+        loading.<span class="fn">postValue</span>(<span class="kw">true</span>)
+        <span class="kw">val</span> stream = <span class="type">ByteArrayOutputStream</span>()
+        bitmap.<span class="fn">compress</span>(<span class="type">Bitmap</span>.<span class="type">CompressFormat</span>.JPEG, <span class="num">90</span>, stream)
+        <span class="kw">val</span> body = stream.<span class="fn">toByteArray</span>()
+            .<span class="fn">toRequestBody</span>(<span class="str">"image/jpeg"</span>.<span class="fn">toMediaType</span>())
+        <span class="kw">val</span> part = <span class="type">MultipartBody</span>.<span class="type">Part</span>
+            .<span class="fn">createFormData</span>(<span class="str">"photo"</span>, <span class="str">"face.jpg"</span>, body)
+        <span class="kw">val</span> resp = api.<span class="fn">presensi</span>(tipe, part)
+        result.<span class="fn">postValue</span>(resp.body())
+        loading.<span class="fn">postValue</span>(<span class="kw">false</span>)
+    }
+}
+</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== SWIFT ===== -->
+  <section id="swift">
+    <h2>🍎 iOS Swift</h2>
+
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="tab(this,'sw-service')">FaceService.swift</button>
+      <button class="tab-btn" onclick="tab(this,'sw-vc')">PresensiViewController.swift</button>
+    </div>
+
+    <div id="sw-service" class="tab-pane active">
+      <div class="code-wrap"><div class="code-lang">swift</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="kw">import</span> <span class="type">Foundation</span>; <span class="kw">import</span> <span class="type">UIKit</span>
+
+<span class="kw">struct</span> <span class="type">PresensiResult</span>: <span class="type">Codable</span> {
+  <span class="kw">let</span> ok: <span class="type">Bool</span>; <span class="kw">let</span> name: <span class="type">String</span>?
+  <span class="kw">let</span> similarity_pct: <span class="type">Double</span>?; <span class="kw">let</span> waktu: <span class="type">String</span>?; <span class="kw">let</span> error: <span class="type">String</span>?
+}
+
+<span class="kw">class</span> <span class="type">FaceService</span> {
+  <span class="kw">static let</span> shared = <span class="type">FaceService</span>()
+  <span class="kw">private let</span> base = <span class="str">"https://your-express-api.com"</span>
+
+  <span class="kw">func</span> <span class="fn">presensi</span>(image: <span class="type">UIImage</span>, tipe: <span class="type">String</span>,
+               completion: <span class="fn">@escaping</span> (<span class="type">Result</span>&lt;<span class="type">PresensiResult</span>, <span class="type">Error</span>&gt;) -&gt; <span class="type">Void</span>) {
+    <span class="kw">guard let</span> jpeg = image.<span class="fn">jpegData</span>(compressionQuality: <span class="num">0.9</span>) <span class="kw">else</span> { <span class="kw">return</span> }
+    <span class="kw">let</span> url = <span class="type">URL</span>(string: <span class="str">"\(base)/presensi/\(tipe)"</span>)!
+    <span class="kw">var</span> req = <span class="type">URLRequest</span>(url: url); req.httpMethod = <span class="str">"POST"</span>
+    <span class="kw">let</span> b = <span class="str">"Boundary-\(UUID().uuidString)"</span>
+    req.<span class="fn">setValue</span>(<span class="str">"multipart/form-data; boundary=\(b)"</span>, forHTTPHeaderField: <span class="str">"Content-Type"</span>)
+    <span class="kw">var</span> body = <span class="type">Data</span>()
+    body += <span class="str">"--\(b)\r\nContent-Disposition: form-data; name=\"photo\"; filename=\"face.jpg\"\r\nContent-Type: image/jpeg\r\n\r\n"</span>.<span class="fn">data</span>(using: .utf8)!
+    body += jpeg
+    body += <span class="str">"\r\n--\(b)--\r\n"</span>.<span class="fn">data</span>(using: .utf8)!
+    req.httpBody = body
+    <span class="type">URLSession</span>.shared.<span class="fn">dataTask</span>(with: req) { data, _, err <span class="kw">in</span>
+      <span class="kw">if let</span> e = err { completion(.<span class="fn">failure</span>(e)); <span class="kw">return</span> }
+      <span class="kw">let</span> r = <span class="kw">try</span>! <span class="type">JSONDecoder</span>().<span class="fn">decode</span>(<span class="type">PresensiResult</span>.<span class="kw">self</span>, from: data!)
+      completion(.<span class="fn">success</span>(r))
+    }.<span class="fn">resume</span>()
+  }
+}
+</code></pre>
+      </div>
+    </div>
+
+    <div id="sw-vc" class="tab-pane">
+      <div class="code-wrap"><div class="code-lang">swift</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="fn">@IBAction func</span> <span class="fn">btnMasukTapped</span>(_ sender: <span class="kw">Any</span>) {
+  <span class="kw">guard let</span> photo = capturedImage <span class="kw">else</span> { <span class="kw">return</span> }
+  <span class="type">FaceService</span>.shared.<span class="fn">presensi</span>(image: photo, tipe: <span class="str">"masuk"</span>) { result <span class="kw">in</span>
+    <span class="type">DispatchQueue</span>.main.<span class="fn">async</span> {
+      <span class="kw">switch</span> result {
+      <span class="kw">case</span> .<span class="fn">success</span>(<span class="kw">let</span> r) <span class="kw">where</span> r.ok:
+        <span class="kw">self</span>.label.text = <span class="str">"✅ \(r.name ?? "") — \(r.similarity_pct ?? 0)%"</span>
+      <span class="kw">case</span> .<span class="fn">success</span>(<span class="kw">let</span> r):
+        <span class="kw">self</span>.label.text = <span class="str">"❌ \(r.error ?? "Gagal")"</span>
+      <span class="kw">case</span> .<span class="fn">failure</span>(<span class="kw">let</span> e):
+        <span class="kw">self</span>.label.text = <span class="str">"Error: \(e.localizedDescription)"</span>
+      }
+    }
+  }
+}
+</code></pre>
+      </div>
+    </div>
+  </section>
+
+  <!-- ===== DB SCHEMA ===== -->
+  <section id="db-schema">
+    <h2>🗄️ Schema PostgreSQL</h2>
+    <div class="code-wrap"><div class="code-lang">sql</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="cmt">-- Karyawan — embedding disimpan sebagai JSONB</span>
+<span class="kw">CREATE TABLE</span> karyawan (
+  id          <span class="type">SERIAL PRIMARY KEY</span>,
+  user_id     <span class="type">TEXT UNIQUE NOT NULL</span>,
+  name        <span class="type">TEXT NOT NULL</span>,
+  email       <span class="type">TEXT</span>,
+  phone       <span class="type">TEXT</span>,
+  embedding   <span class="type">JSONB NOT NULL</span>,   <span class="cmt">-- float[512] dari /api/extract-embedding</span>
+  face_image  <span class="type">TEXT</span>,
+  is_active   <span class="type">BOOLEAN DEFAULT true</span>,
+  created_at  <span class="type">TIMESTAMPTZ DEFAULT NOW()</span>,
+  updated_at  <span class="type">TIMESTAMPTZ</span>
+);
+
+<span class="cmt">-- Presensi</span>
+<span class="kw">CREATE TABLE</span> presensi (
+  id              <span class="type">SERIAL PRIMARY KEY</span>,
+  user_id         <span class="type">TEXT REFERENCES karyawan(user_id)</span>,
+  tipe            <span class="type">TEXT CHECK(tipe IN ('masuk','keluar'))</span>,
+  similarity      <span class="type">REAL</span>,
+  antispoof_score <span class="type">REAL</span>,
+  device_id       <span class="type">TEXT</span>,
+  location        <span class="type">TEXT</span>,
+  ip_address      <span class="type">TEXT</span>,
+  waktu           <span class="type">TIMESTAMPTZ DEFAULT NOW()</span>
+);
+
+<span class="kw">CREATE INDEX</span> idx_presensi_waktu <span class="kw">ON</span> presensi(waktu <span class="type">DESC</span>);
+<span class="kw">CREATE INDEX</span> idx_presensi_user  <span class="kw">ON</span> presensi(user_id, waktu <span class="type">DESC</span>);
+</code></pre>
+    </div>
+  </section>
+
+  <!-- ===== SUPABASE ===== -->
+  <section id="supabase">
+    <h2>⚡ Supabase + pgvector</h2>
+    <p>Supabase mendukung extension <code>pgvector</code> — bandingkan embedding langsung di SQL, jauh lebih cepat untuk 1:N dengan banyak karyawan.</p>
+
+    <div class="tab-row">
+      <button class="tab-btn active" onclick="tab(this,'sb-setup')">Setup pgvector</button>
+      <button class="tab-btn" onclick="tab(this,'sb-query')">Query 1:N</button>
+      <button class="tab-btn" onclick="tab(this,'sb-js')">Supabase JS</button>
+    </div>
+
+    <div id="sb-setup" class="tab-pane active">
+      <div class="code-wrap"><div class="code-lang">sql — Supabase SQL Editor</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="kw">CREATE EXTENSION IF NOT EXISTS</span> vector;
+
+<span class="kw">ALTER TABLE</span> karyawan
+  <span class="kw">ADD COLUMN</span> emb_vec <span class="type">vector(512)</span>;
+
+<span class="cmt">-- Index HNSW untuk pencarian cepat</span>
+<span class="kw">CREATE INDEX ON</span> karyawan
+  <span class="kw">USING</span> hnsw (emb_vec vector_cosine_ops);
+</code></pre>
+      </div>
+    </div>
+
+    <div id="sb-query" class="tab-pane">
+      <div class="code-wrap"><div class="code-lang">sql</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="cmt">-- Cari wajah paling mirip (1:N langsung di DB, sangat cepat)</span>
+<span class="kw">SELECT</span>
+  user_id, name,
+  <span class="num">1</span> - (emb_vec <span class="fn">&lt;=&gt;</span> <span class="str">'[0.021,-0.134,0.072,...]'</span>::<span class="type">vector</span>) <span class="kw">AS</span> similarity
+<span class="kw">FROM</span> karyawan
+<span class="kw">WHERE</span> is_active = <span class="kw">true</span>
+  <span class="kw">AND</span> <span class="num">1</span> - (emb_vec <span class="fn">&lt;=&gt;</span> <span class="str">'[...]'</span>::<span class="type">vector</span>) &gt; <span class="num">0.30</span>  <span class="cmt">-- threshold</span>
+<span class="kw">ORDER BY</span> emb_vec <span class="fn">&lt;=&gt;</span> <span class="str">'[...]'</span>::<span class="type">vector</span>
+<span class="kw">LIMIT</span> <span class="num">1</span>;
+</code></pre>
+      </div>
+    </div>
+
+    <div id="sb-js" class="tab-pane">
+      <div class="code-wrap"><div class="code-lang">javascript</div><button class="copy-btn" onclick="copyCode(this)">Copy</button>
+<pre><code><span class="kw">const</span> { createClient } = <span class="fn">require</span>(<span class="str">'@supabase/supabase-js'</span>);
+<span class="kw">const</span> sb = <span class="fn">createClient</span>(process.env.SUPABASE_URL, process.env.SUPABASE_SERVICE_KEY);
+
+<span class="cmt">// Daftar: simpan embedding sebagai array biasa (Supabase konversi ke vector)</span>
+<span class="kw">await</span> sb.<span class="fn">from</span>(<span class="str">'karyawan'</span>).<span class="fn">upsert</span>({
+  user_id:   userId,
+  name:      name,
+  emb_vec:   extracted.embedding,   <span class="cmt">// float[] langsung</span>
+});
+
+<span class="cmt">// Presensi 1:N — pakai RPC yang wraps query pgvector di atas</span>
+<span class="kw">const</span> { data } = <span class="kw">await</span> sb.<span class="fn">rpc</span>(<span class="str">'cari_wajah'</span>, {
+  query_emb: extracted.embedding,
+  threshold: <span class="num">0.30</span>,
+});
+<span class="cmt">// data[0] = { user_id, name, similarity }</span>
+</code></pre>
+      </div>
+    </div>
+
+    <div class="callout callout-warn">
+      <div class="callout-icon">⚠️</div>
+      <div class="callout-body"><strong>Tanpa pgvector:</strong> loop compare satu per satu di Node.js masih cukup untuk &lt;200 karyawan. Untuk &gt;500 karyawan, pgvector atau Redis cache embedding sangat disarankan.</div>
+    </div>
+  </section>
+
+</article>
+</div>
+
+<script>
+function tab(btn, id) {
+  const sec = btn.closest('section') || btn.closest('article');
+  btn.closest('.tab-row').querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+  sec.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+  btn.classList.add('active');
+  document.getElementById(id).classList.add('active');
+}
+
+function copyCode(btn) {
+  const code = btn.closest('.code-wrap').querySelector('code').innerText;
+  navigator.clipboard.writeText(code).then(() => {
+    btn.textContent = 'Tersalin!';
+    setTimeout(() => btn.textContent = 'Copy', 1600);
+  }).catch(() => {
+    const ta = document.createElement('textarea');
+    ta.value = code; document.body.appendChild(ta); ta.select();
+    document.execCommand('copy'); document.body.removeChild(ta);
+    btn.textContent = 'Tersalin!';
+    setTimeout(() => btn.textContent = 'Copy', 1600);
+  });
+}
+
+// Active sidebar nav on scroll
+const secs = document.querySelectorAll('section[id]');
+const links = document.querySelectorAll('aside a[href^="#"]');
+const obs = new IntersectionObserver(entries => {
+  entries.forEach(e => {
+    if (e.isIntersecting) {
+      links.forEach(a => a.classList.toggle('active', a.getAttribute('href') === '#' + e.target.id));
+    }
+  });
+}, { rootMargin: '-56px 0px -60% 0px', threshold: 0 });
+secs.forEach(s => obs.observe(s));
+</script>
+</body>
+</html>

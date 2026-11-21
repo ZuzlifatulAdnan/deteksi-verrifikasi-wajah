@@ -3,376 +3,224 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>Presensi — Face Verify</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
-<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&family=Space+Grotesk:wght@500;600;700&display=swap">
+<title>Presensi — FaceVerify</title>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
-/* ---- tokens ---- */
 :root {
-  --bg:       #0a0f1e;
-  --bg2:      #111827;
-  --bg3:      #1f2937;
-  --border:   #2d3748;
-  --fg:       #f1f5f9;
-  --fg2:      #94a3b8;
-  --fg3:      #64748b;
-  --green:    #10b981;
-  --green2:   #059669;
-  --blue:     #3b82f6;
-  --blue2:    #2563eb;
-  --red:      #ef4444;
-  --red2:     #dc2626;
-  --amber:    #f59e0b;
-  --purple:   #8b5cf6;
-  --oval-w:   240px;
-  --oval-h:   280px;
+  --base: #060C18; --void: #03060C; --panel: #0D1526; --border: #152035;
+  --teal: #00C2A8; --green: #10b981; --green2: #059669;
+  --blue: #3b82f6; --blue2: #2563eb;
+  --red: #ef4444; --amber: #f59e0b; --purple: #8b5cf6;
+  --text: #e2e8f0; --muted: #64748b;
+  --oval-w: 240px; --oval-h: 240px;
   color-scheme: dark;
 }
-@media (prefers-color-scheme: light) {
-  :root:not([data-theme="dark"]) {
-    --bg:  #f0f4f8; --bg2: #ffffff; --bg3: #e2e8f0;
-    --border: #cbd5e1; --fg: #0f172a; --fg2: #475569; --fg3: #94a3b8;
-    color-scheme: light;
-  }
-}
-:root[data-theme="light"] {
-  --bg:  #f0f4f8; --bg2: #ffffff; --bg3: #e2e8f0;
-  --border: #cbd5e1; --fg: #0f172a; --fg2: #475569; --fg3: #94a3b8;
-  color-scheme: light;
-}
-
 *, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0 }
 body {
   font-family: 'Inter', system-ui, sans-serif;
-  background: var(--bg);
-  color: var(--fg);
-  min-height: 100vh;
-  display: flex;
-  flex-direction: column;
+  background: var(--base);
+  background-image: radial-gradient(circle at 1px 1px, rgba(0,194,168,0.04) 1px, transparent 0);
+  background-size: 24px 24px;
+  color: var(--text); min-height: 100vh; display: flex; flex-direction: column;
 }
 
-/* ---- header ---- */
+/* HEADER */
 header {
-  background: var(--bg2);
-  border-bottom: 1px solid var(--border);
-  padding: 0 24px;
-  height: 60px;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  position: sticky;
-  top: 0;
-  z-index: 10;
+  background: rgba(6,12,24,0.96); border-bottom: 1px solid var(--border);
+  padding: 0 24px; height: 60px;
+  display: flex; align-items: center; justify-content: space-between;
+  position: sticky; top: 0; z-index: 10; backdrop-filter: blur(12px);
 }
-.logo { font-family: 'Space Grotesk', sans-serif; font-weight: 700; font-size: 1.1rem; letter-spacing: -0.02em }
-.logo span { color: var(--green) }
-.header-right { display: flex; align-items: center; gap: 12px }
-.clock-display { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 600; color: var(--fg) }
-.date-display { font-size: .8rem; color: var(--fg2) }
+.logo {
+  display: flex; align-items: center; gap: 0;
+  font-family: 'Space Grotesk', sans-serif; font-weight: 700;
+  font-size: 1.1rem; letter-spacing: 0.06em; color: var(--teal); text-decoration: none;
+}
+.logo-word span { color: var(--text); }
+.logo-sep { color: var(--border); padding: 0 .5rem; font-weight: 300; }
+.logo-sub { font-family: 'JetBrains Mono', monospace; font-size: .72rem; font-weight: 400; color: var(--muted); letter-spacing: 0.04em; }
+.header-right { display: flex; align-items: center; gap: 16px }
+.clock-display { font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 600; color: var(--text); }
+.date-display { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: var(--muted); }
 .header-nav a {
-  color: var(--fg2); text-decoration: none; font-size: .85rem; padding: 6px 10px;
-  border-radius: 6px; transition: all .15s;
+  color: var(--muted); text-decoration: none; font-size: .75rem;
+  font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em;
+  padding: 6px 10px; border-radius: 2px; transition: all .15s;
 }
-.header-nav a:hover { background: var(--bg3); color: var(--fg) }
+.header-nav a:hover { background: var(--panel); color: var(--text); }
 
-/* ---- main layout ---- */
+/* MAIN LAYOUT */
 main {
-  flex: 1;
-  display: grid;
-  grid-template-columns: minmax(300px, 400px) 1fr;
-  gap: 0;
-  max-width: 1300px;
-  width: 100%;
-  margin: 0 auto;
-  padding: 24px 16px;
-  gap: 24px;
-  align-items: start;
+  flex: 1; display: grid; grid-template-columns: minmax(300px, 400px) 1fr;
+  gap: 24px; max-width: 1300px; width: 100%; margin: 0 auto; padding: 24px 16px; align-items: start;
 }
 
-/* ---- camera panel ---- */
+/* CAMERA PANEL */
 .camera-panel {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  overflow: hidden;
-  display: flex;
-  flex-direction: column;
+  background: var(--panel); border: 1px solid var(--border); overflow: hidden;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  display: flex; flex-direction: column;
 }
 .panel-title {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: .95rem;
-  font-weight: 600;
-  padding: 16px 20px 0;
-  color: var(--fg2);
-  text-transform: uppercase;
-  letter-spacing: .06em;
-  font-size: .75rem;
+  font-family: 'JetBrains Mono', monospace; font-size: .65rem; font-weight: 600;
+  padding: 16px 20px 0; color: var(--muted); text-transform: uppercase; letter-spacing: .1em;
 }
 .camera-wrap {
-  position: relative;
-  margin: 16px 20px;
-  border-radius: 16px;
-  overflow: hidden;
-  background: #000;
-  aspect-ratio: 4/5;
+  position: relative; margin: 16px 20px; overflow: hidden;
+  background: #000; aspect-ratio: 4/5;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
 }
-video {
-  width: 100%; height: 100%;
-  object-fit: cover;
-  display: block;
-  transform: scaleX(-1);
-}
+video { width: 100%; height: 100%; object-fit: cover; display: block; transform: scaleX(-1); }
 .overlay {
   position: absolute; inset: 0;
-  display: flex; align-items: center; justify-content: center;
-  pointer-events: none;
+  display: flex; align-items: center; justify-content: center; pointer-events: none;
 }
-.oval-container {
-  position: relative;
-  width: var(--oval-w);
-  height: var(--oval-h);
-}
-#ovalBg {
-  position: absolute; inset: 0;
-  border: 2px solid rgba(255,255,255,.18);
-  border-radius: 50%;
-}
+.oval-container { position: relative; width: var(--oval-w); height: var(--oval-h); }
+#ovalBg { position: absolute; inset: 0; border: 2px solid rgba(0,194,168,.2); border-radius: 50%; }
 svg.arc {
   position: absolute; inset: -6px;
-  width: calc(100% + 12px);
-  height: calc(100% + 12px);
-  overflow: visible;
+  width: calc(100% + 12px); height: calc(100% + 12px); overflow: visible;
 }
 .hint-text {
-  position: absolute;
-  bottom: -36px;
-  left: 50%; transform: translateX(-50%);
-  white-space: nowrap;
-  font-size: .78rem;
-  font-weight: 500;
-  color: rgba(255,255,255,.75);
-  letter-spacing: .02em;
-  text-align: center;
+  position: absolute; bottom: -36px; left: 50%; transform: translateX(-50%);
+  white-space: nowrap; font-size: .72rem; font-weight: 500;
+  color: rgba(255,255,255,.75); letter-spacing: .04em; text-align: center;
+  font-family: 'JetBrains Mono', monospace;
 }
 .countdown-ring {
-  position: absolute;
-  bottom: -60px;
-  left: 50%; transform: translateX(-50%);
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 2rem;
-  font-weight: 700;
-  color: var(--green);
-  opacity: 0;
-  transition: opacity .3s;
+  position: absolute; bottom: -60px; left: 50%; transform: translateX(-50%);
+  font-family: 'Space Grotesk', sans-serif; font-size: 2rem; font-weight: 700;
+  color: var(--teal); opacity: 0; transition: opacity .3s;
 }
-
-/* mask strips (top/bottom) */
 .mask-top, .mask-bottom {
-  position: absolute; left: 0; right: 0;
-  background: rgba(0,0,0,.55);
-  backdrop-filter: blur(2px);
+  position: absolute; left: 0; right: 0; background: rgba(0,0,0,.55); backdrop-filter: blur(2px);
 }
-.mask-top { top: 0; height: 60px; border-bottom: 1px solid rgba(255,255,255,.06) }
-.mask-bottom { bottom: 0; height: 70px; border-top: 1px solid rgba(255,255,255,.06) }
-
-/* status banner inside camera */
+.mask-top { top: 0; height: 60px; border-bottom: 1px solid rgba(255,255,255,.04) }
+.mask-bottom { bottom: 0; height: 70px; border-top: 1px solid rgba(255,255,255,.04) }
 .cam-status {
-  position: absolute;
-  bottom: 10px; left: 50%; transform: translateX(-50%);
-  background: rgba(0,0,0,.7);
-  backdrop-filter: blur(10px);
-  border-radius: 20px;
-  padding: 6px 16px;
-  font-size: .78rem;
-  font-weight: 500;
-  color: #fff;
-  white-space: nowrap;
-  transition: all .3s;
-  pointer-events: none;
+  position: absolute; bottom: 10px; left: 50%; transform: translateX(-50%);
+  background: rgba(0,0,0,.75); backdrop-filter: blur(10px);
+  padding: 6px 16px; font-size: .72rem; font-weight: 500; color: #fff;
+  white-space: nowrap; transition: all .3s; pointer-events: none;
+  font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em;
 }
 .cam-status.green { background: rgba(16,185,129,.85) }
 .cam-status.red   { background: rgba(239,68,68,.85) }
 .cam-status.blue  { background: rgba(59,130,246,.85) }
 .cam-status.amber { background: rgba(245,158,11,.85) }
 
-/* mode tabs */
+/* MODE TABS */
 .mode-tabs {
-  display: flex;
-  margin: 0 20px 16px;
-  background: var(--bg3);
-  border-radius: 10px;
-  padding: 3px;
-  gap: 2px;
+  display: flex; margin: 0 20px 16px; overflow: hidden;
+  background: var(--void); border: 1px solid var(--border);
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
 }
 .mode-tab {
-  flex: 1;
-  border: none;
-  background: transparent;
-  color: var(--fg2);
-  padding: 8px;
-  border-radius: 8px;
-  font-family: 'Inter', sans-serif;
-  font-size: .82rem;
-  font-weight: 500;
-  cursor: pointer;
-  transition: all .15s;
+  flex: 1; border: none; background: transparent; color: var(--muted);
+  padding: 10px; font-family: 'JetBrains Mono', monospace; font-size: .72rem;
+  font-weight: 600; cursor: pointer; transition: all .15s; letter-spacing: 0.06em;
 }
-.mode-tab.active {
-  background: var(--bg2);
-  color: var(--fg);
-  box-shadow: 0 1px 3px rgba(0,0,0,.3);
-}
+.mode-tab.active { background: var(--teal); color: var(--void); }
 
-/* action button */
+/* ACTION BUTTON */
 .btn-capture {
-  display: block;
-  margin: 0 20px 20px;
-  width: calc(100% - 40px);
-  padding: 14px;
-  border: none;
-  border-radius: 12px;
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1rem;
-  font-weight: 600;
-  cursor: pointer;
-  transition: all .2s;
-  letter-spacing: .01em;
+  display: block; margin: 0 20px 20px; width: calc(100% - 40px);
+  padding: 14px; border: none; font-family: 'JetBrains Mono', monospace;
+  font-size: .85rem; font-weight: 700; cursor: pointer; transition: all .2s; letter-spacing: 0.08em;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 }
-.btn-masuk  { background: var(--green); color: #fff }
-.btn-masuk:hover { background: var(--green2) }
-.btn-keluar { background: var(--blue); color: #fff }
-.btn-keluar:hover { background: var(--blue2) }
-.btn-capture:disabled { opacity: .5; cursor: not-allowed }
+.btn-masuk  { background: var(--teal); color: var(--void); }
+.btn-masuk:hover { background: #00dfc0; }
+.btn-keluar { background: var(--blue); color: #fff; }
+.btn-keluar:hover { background: var(--blue2); }
+.btn-capture:disabled { opacity: .5; cursor: not-allowed; }
 
-/* ---- right panel ---- */
+/* RIGHT PANEL */
 .right-panel { display: flex; flex-direction: column; gap: 20px }
 
-/* stats row */
+/* STATS ROW */
 .stats-row {
-  display: grid;
-  grid-template-columns: repeat(3, 1fr);
-  gap: 12px;
+  display: grid; grid-template-columns: repeat(3, 1fr);
+  gap: 1px; background: var(--border); overflow: hidden;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 }
-.stat-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 14px;
-  padding: 16px;
+.stat-card { background: var(--panel); padding: 16px 20px; }
+.stat-label {
+  font-family: 'JetBrains Mono', monospace; font-size: .62rem; color: var(--muted);
+  text-transform: uppercase; letter-spacing: .08em; margin-bottom: 6px;
 }
-.stat-label { font-size: .72rem; color: var(--fg3); text-transform: uppercase; letter-spacing: .06em; margin-bottom: 6px }
-.stat-value { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700 }
-.stat-value.green  { color: var(--green) }
-.stat-value.blue   { color: var(--blue) }
-.stat-value.purple { color: var(--purple) }
+.stat-value { font-family: 'Space Grotesk', sans-serif; font-size: 1.8rem; font-weight: 700; }
+.stat-value.green  { color: var(--teal); }
+.stat-value.blue   { color: var(--blue); }
+.stat-value.purple { color: var(--purple); }
 
-/* result card */
+/* RESULT CARD */
 .result-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  padding: 24px;
-  text-align: center;
-  display: none;
-  animation: fadeSlideUp .3s ease;
+  background: var(--panel); border: 1px solid var(--border);
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+  padding: 24px; text-align: center; display: none; animation: fadeSlideUp .3s ease;
 }
 .result-card.show { display: block }
-@keyframes fadeSlideUp {
-  from { opacity:0; transform: translateY(12px) }
-  to   { opacity:1; transform: translateY(0) }
-}
+@keyframes fadeSlideUp { from{opacity:0;transform:translateY(12px)} to{opacity:1;transform:translateY(0)} }
 .result-icon { font-size: 3.5rem; margin-bottom: 12px }
 .result-name { font-family: 'Space Grotesk', sans-serif; font-size: 1.5rem; font-weight: 700; margin-bottom: 4px }
-.result-uid  { font-size: .82rem; color: var(--fg3); margin-bottom: 12px }
-.result-msg  { font-size: .9rem; color: var(--fg2); margin-bottom: 16px; line-height: 1.5 }
+.result-uid  { font-family: 'JetBrains Mono', monospace; font-size: .72rem; color: var(--muted); margin-bottom: 12px }
+.result-msg  { font-size: .9rem; color: var(--muted); margin-bottom: 16px; line-height: 1.5 }
 .result-time {
-  font-family: 'Space Grotesk', sans-serif;
-  font-size: 1.1rem;
-  font-weight: 600;
-  background: var(--bg3);
-  border-radius: 10px;
-  padding: 10px 16px;
-  display: inline-block;
+  font-family: 'Space Grotesk', sans-serif; font-size: 1.1rem; font-weight: 600;
+  background: var(--void); border: 1px solid var(--border); padding: 10px 16px; display: inline-block;
 }
-.result-sim {
-  font-size: .78rem;
-  color: var(--fg3);
-  margin-top: 8px;
-}
-.result-card.success { border-color: var(--green) }
-.result-card.failed  { border-color: var(--red) }
-.result-card.success .result-icon::before { content: "✅" }
-.result-card.failed  .result-icon::before { content: "❌" }
+.result-sim  { font-family: 'JetBrains Mono', monospace; font-size: .68rem; color: var(--muted); margin-top: 8px }
+.result-card.success { border-color: rgba(0,194,168,.3) }
+.result-card.failed  { border-color: rgba(239,68,68,.3) }
 
-/* today's log table */
+/* LOG TABLE */
 .log-card {
-  background: var(--bg2);
-  border: 1px solid var(--border);
-  border-radius: 20px;
-  overflow: hidden;
-  flex: 1;
+  background: var(--panel); border: 1px solid var(--border); overflow: hidden; flex: 1;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
 }
 .log-header {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  padding: 16px 20px;
-  border-bottom: 1px solid var(--border);
+  display: flex; align-items: center; justify-content: space-between;
+  padding: 14px 20px; border-bottom: 1px solid var(--border);
 }
-.log-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: .95rem; font-weight: 600 }
+.log-header h3 { font-family: 'Space Grotesk', sans-serif; font-size: .9rem; font-weight: 600; }
 .log-refresh {
-  background: var(--bg3); border: none; color: var(--fg2);
-  border-radius: 8px; padding: 5px 10px; font-size: .78rem;
-  cursor: pointer; transition: .15s;
+  background: var(--void); border: 1px solid var(--border); color: var(--muted);
+  padding: 5px 10px; font-family: 'JetBrains Mono', monospace; font-size: .68rem;
+  cursor: pointer; transition: .15s; letter-spacing: 0.06em;
 }
-.log-refresh:hover { color: var(--fg) }
+.log-refresh:hover { color: var(--text); border-color: var(--teal); }
 .log-table-wrap { overflow-x: auto }
-table { width: 100%; border-collapse: collapse; font-size: .82rem }
+table { width: 100%; border-collapse: collapse; font-size: .8rem }
 th {
-  text-align: left; padding: 10px 16px;
-  color: var(--fg3); font-weight: 500; font-size: .72rem;
-  text-transform: uppercase; letter-spacing: .06em;
-  border-bottom: 1px solid var(--border);
+  text-align: left; padding: 10px 16px; color: var(--muted); font-weight: 500;
+  font-size: .62rem; text-transform: uppercase; letter-spacing: .08em;
+  border-bottom: 1px solid var(--border); font-family: 'JetBrains Mono', monospace;
 }
-td { padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,.04); vertical-align: middle }
+td { padding: 11px 16px; border-bottom: 1px solid rgba(255,255,255,.03); vertical-align: middle }
 tr:last-child td { border-bottom: none }
-tr:hover td { background: var(--bg3) }
+tr:hover td { background: rgba(0,194,168,.03) }
 .badge {
-  display: inline-block;
-  font-size: .72rem;
-  font-weight: 600;
-  padding: 2px 10px;
-  border-radius: 20px;
-  letter-spacing: .03em;
+  display: inline-block; font-family: 'JetBrains Mono', monospace;
+  font-size: .62rem; font-weight: 600; padding: 2px 10px; letter-spacing: .04em;
 }
-.badge-masuk  { background: rgba(16,185,129,.15); color: var(--green) }
-.badge-keluar { background: rgba(59,130,246,.15);  color: var(--blue) }
-.empty-row td { text-align: center; color: var(--fg3); padding: 24px }
+.badge-masuk  { background: rgba(0,194,168,.1); color: var(--teal); border: 1px solid rgba(0,194,168,.2); }
+.badge-keluar { background: rgba(59,130,246,.1); color: var(--blue); border: 1px solid rgba(59,130,246,.2); }
+.empty-row td { text-align: center; color: var(--muted); padding: 24px; font-family: 'JetBrains Mono', monospace; font-size: .72rem; }
 
-/* spinner overlay */
+/* SPINNER */
 #spinner {
-  display: none;
-  position: fixed; inset: 0;
-  background: rgba(0,0,0,.55);
-  backdrop-filter: blur(4px);
-  z-index: 100;
-  align-items: center; justify-content: center;
-  flex-direction: column; gap: 16px;
+  display: none; position: fixed; inset: 0;
+  background: rgba(0,0,0,.55); backdrop-filter: blur(4px); z-index: 100;
+  align-items: center; justify-content: center; flex-direction: column; gap: 16px;
 }
 #spinner.show { display: flex }
-.spin-ring {
-  width: 56px; height: 56px;
-  border: 4px solid var(--border);
-  border-top-color: var(--green);
-  border-radius: 50%;
-  animation: spin .7s linear infinite;
-}
+.spin-ring { width: 56px; height: 56px; border: 4px solid var(--border); border-top-color: var(--teal); border-radius: 50%; animation: spin .7s linear infinite; }
 @keyframes spin { to { transform: rotate(360deg) } }
-.spin-label { color: var(--fg2); font-size: .88rem }
+.spin-label { color: var(--muted); font-size: .82rem; font-family: 'JetBrains Mono', monospace; }
 
-/* ---- canvas (hidden) ---- */
 #snapCanvas, #motCanvas { display: none }
 
-/* ---- responsive ---- */
 @media (max-width: 800px) {
   main { grid-template-columns: 1fr }
   .stats-row { grid-template-columns: repeat(2, 1fr) }
@@ -387,7 +235,11 @@ tr:hover td { background: var(--bg3) }
 <body>
 
 <header>
-  <div class="logo">Face<span>Verify</span> &nbsp;|&nbsp; <span style="font-weight:400;font-size:.9rem;color:var(--fg2)">Terminal Presensi</span></div>
+  <a href="/" class="logo">
+    <div class="logo-word"><span>FACE</span>VERIFY</div>
+    <span class="logo-sep">/</span>
+    <span class="logo-sub">Terminal Presensi</span>
+  </a>
   <div class="header-right">
     <div>
       <div class="clock-display" id="clockEl">--:--:--</div>
@@ -397,14 +249,14 @@ tr:hover td { background: var(--bg3) }
       <a href="/">Beranda</a>
       <a href="/register.html">Daftar</a>
       <a href="/verify.html">Verifikasi</a>
+      <a href="/docs-integrasi.html">Integrasi</a>
     </div>
   </div>
 </header>
 
 <main>
-  <!-- Camera panel -->
   <div class="camera-panel">
-    <div class="panel-title">Kamera Presensi</div>
+    <div class="panel-title">// Kamera Presensi</div>
 
     <div class="camera-wrap">
       <video id="video" autoplay muted playsinline></video>
@@ -413,36 +265,33 @@ tr:hover td { background: var(--bg3) }
       <div class="overlay">
         <div class="oval-container">
           <div id="ovalBg"></div>
-          <svg class="arc" viewBox="0 0 252 292">
-            <ellipse id="arcEl"
-              cx="126" cy="146" rx="121" ry="143"
-              fill="none" stroke="#10b981" stroke-width="4" stroke-linecap="round"
+          <svg class="arc" viewBox="0 0 252 252">
+            <circle id="arcEl"
+              cx="126" cy="126" r="120"
+              fill="none" stroke="#00C2A8" stroke-width="4" stroke-linecap="round"
               pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"
-              transform="rotate(-90 126 146)"
+              transform="rotate(-90 126 126)"
               style="display:none; transition: stroke-dashoffset .08s linear, stroke .3s"/>
           </svg>
-          <div class="hint-text" id="hintText">Posisikan wajah dalam oval</div>
+          <div class="hint-text" id="hintText">Posisikan wajah dalam lingkaran</div>
           <div class="countdown-ring" id="cntdown"></div>
         </div>
       </div>
       <div class="cam-status" id="camStatus">Memulai kamera…</div>
     </div>
 
-    <!-- mode tabs -->
     <div class="mode-tabs">
-      <button class="mode-tab active" id="tabMasuk" onclick="setMode('masuk')">🟢 Masuk</button>
-      <button class="mode-tab" id="tabKeluar" onclick="setMode('keluar')">🔵 Keluar</button>
+      <button class="mode-tab active" id="tabMasuk" onclick="setMode('masuk')">MASUK</button>
+      <button class="mode-tab" id="tabKeluar" onclick="setMode('keluar')">KELUAR</button>
     </div>
 
-    <button class="btn-capture btn-masuk" id="btnCapture" onclick="captureNow()">Presensi Masuk</button>
+    <button class="btn-capture btn-masuk" id="btnCapture" onclick="captureNow()">PRESENSI MASUK</button>
     <canvas id="snapCanvas"></canvas>
     <canvas id="motCanvas" width="64" height="48"></canvas>
   </div>
 
-  <!-- Right panel -->
   <div class="right-panel">
 
-    <!-- Stats -->
     <div class="stats-row">
       <div class="stat-card">
         <div class="stat-label">Masuk Hari Ini</div>
@@ -458,7 +307,6 @@ tr:hover td { background: var(--bg3) }
       </div>
     </div>
 
-    <!-- Result card -->
     <div class="result-card" id="resultCard">
       <div class="result-icon" id="resultIcon"></div>
       <div class="result-name" id="resultName"></div>
@@ -468,20 +316,16 @@ tr:hover td { background: var(--bg3) }
       <div class="result-sim"  id="resultSim"></div>
     </div>
 
-    <!-- Today's log -->
     <div class="log-card">
       <div class="log-header">
-        <h3>📋 Presensi Hari Ini</h3>
-        <button class="log-refresh" onclick="loadToday()">↺ Refresh</button>
+        <h3>Presensi Hari Ini</h3>
+        <button class="log-refresh" onclick="loadToday()">REFRESH</button>
       </div>
       <div class="log-table-wrap">
         <table>
           <thead>
             <tr>
-              <th>Nama</th>
-              <th>Tipe</th>
-              <th>Waktu</th>
-              <th>Keyakinan</th>
+              <th>Nama</th><th>Tipe</th><th>Waktu</th><th>Keyakinan</th>
             </tr>
           </thead>
           <tbody id="logBody">
@@ -494,7 +338,6 @@ tr:hover td { background: var(--bg3) }
   </div>
 </main>
 
-<!-- Spinner -->
 <div id="spinner"><div class="spin-ring"></div><div class="spin-label" id="spinLabel">Memproses wajah…</div></div>
 
 <script>
@@ -541,8 +384,8 @@ function setStatus(msg, cls='') {
 function setState(s) {
   state = s;
   arcEl.style.display = (s === 'holding' || s === 'capturing') ? 'block' : 'none';
-  if (s === 'idle')     { setStatus('Memulai kamera…'); hintEl.textContent = 'Posisikan wajah dalam oval'; cntdEl.style.opacity=0 }
-  if (s === 'scanning') { setStatus('Hadapkan wajah ke kamera'); hintEl.textContent = 'Posisikan wajah dalam oval' }
+  if (s === 'idle')     { setStatus('Memulai kamera…'); hintEl.textContent = 'Posisikan wajah dalam lingkaran'; cntdEl.style.opacity=0 }
+  if (s === 'scanning') { setStatus('Hadapkan wajah ke kamera'); hintEl.textContent = 'Posisikan wajah dalam lingkaran' }
   if (s === 'holding')  { setStatus('Tahan diam…', 'amber'); hintEl.textContent = 'Jangan bergerak'; cntdEl.style.opacity=1 }
   if (s === 'capturing'){ setStatus('Memproses…', 'blue'); hintEl.textContent = '' }
 }
@@ -596,7 +439,7 @@ function setMode(m) {
   mode = m;
   document.getElementById('tabMasuk').classList.toggle('active', m==='masuk');
   document.getElementById('tabKeluar').classList.toggle('active', m==='keluar');
-  btnCap.textContent = m === 'masuk' ? 'Presensi Masuk' : 'Presensi Keluar';
+  btnCap.textContent = m === 'masuk' ? 'PRESENSI MASUK' : 'PRESENSI KELUAR';
   btnCap.className = 'btn-capture ' + (m === 'masuk' ? 'btn-masuk' : 'btn-keluar');
 }
 

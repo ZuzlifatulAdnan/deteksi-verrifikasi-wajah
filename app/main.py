@@ -562,6 +562,85 @@ async def get_logs(limit: int = 50):
     return {"success": True, "logs": db.get_logs(limit)}
 
 
+# ---------------------------------------------------------------------------
+# Headless endpoints — untuk integrasi Express.js / backend eksternal
+# Database/penyimpanan dikelola sepenuhnya oleh backend pemanggil.
+# ---------------------------------------------------------------------------
+
+@api.post("/extract-embedding")
+async def extract_embedding(
+    image:        UploadFile = File(None),
+    image_base64: str = Form(None),
+    check_liveness: bool = Form(True),
+):
+    """
+    Ekstrak 512-dim face embedding dari gambar.
+    Backend eksternal menyimpan & membandingkan embedding sendiri.
+    Response: { embedding: float[512], face_info, antispoof, is_live }
+    """
+    try:
+        if image:
+            img, _ = await _img_from_upload(image)
+        elif image_base64:
+            img, _ = _img_from_b64(image_base64)
+        else:
+            raise HTTPException(400, "Tidak ada gambar yang dikirim")
+
+        eng = engine()
+        emb, face_info, err = eng.extract(img)
+        if err:
+            return _err(400, err)
+
+        is_live, spoof_result = None, None
+        if check_liveness:
+            is_live, spoof_result = spoof().analyze(img, face_info.get("bbox"))
+
+        return {
+            "success":   True,
+            "embedding": emb.tolist(),          # 512 float — simpan di DB sendiri
+            "face_info": face_info,
+            "is_live":   is_live,
+            "antispoof": spoof_result,
+        }
+
+    except HTTPException:
+        raise
+    except Exception as e:
+        logger.exception("extract-embedding error")
+        return _err(500, str(e))
+
+
+@api.post("/compare-embeddings")
+async def compare_embeddings(
+    embedding1: str = Form(...),   # JSON array [float, ...] 512-dim
+    embedding2: str = Form(...),   # JSON array [float, ...] 512-dim
+    threshold:  float = Form(0.30),
+):
+    """
+    Bandingkan dua embedding (keduanya sudah disimpan di backend pemanggil).
+    Response: { similarity, is_match, confidence }
+    """
+    try:
+        import json
+        e1 = np.array(json.loads(embedding1), dtype=np.float32)
+        e2 = np.array(json.loads(embedding2), dtype=np.float32)
+        if e1.shape != (512,) or e2.shape != (512,):
+            return _err(400, "Embedding harus 512-dimensi")
+        eng = engine()
+        eng.SIMILARITY_THRESHOLD = threshold
+        sim, is_match = eng.compare(e1, e2)
+        return {
+            "success":    True,
+            "similarity": round(sim, 4),
+            "similarity_pct": round(sim * 100, 1),
+            "is_match":   is_match,
+            "confidence": eng.confidence_label(sim),
+            "threshold":  threshold,
+        }
+    except Exception as e:
+        return _err(500, str(e))
+
+
 @api.get("/face-image/{filename}")
 async def face_image(filename: str):
     filename = os.path.basename(filename)   # strip any path components

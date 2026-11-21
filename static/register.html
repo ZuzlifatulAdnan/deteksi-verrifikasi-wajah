@@ -4,26 +4,40 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>Daftarkan Wajah — FaceVerify</title>
-<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@500;600;700&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
 <style>
 :root {
-  --bg: #07101e; --surface: #0d1829; --card: #111f36; --border: #1b2d44;
-  --accent: #3b82f6; --sky: #0ea5e9; --green: #10b981; --amber: #f59e0b; --red: #ef4444;
-  --text: #e2e8f0; --muted: #64748b; --r: 14px; color-scheme: dark;
+  --base: #060C18; --void: #03060C; --panel: #0D1526; --border: #152035;
+  --teal: #00C2A8; --sky: #0ea5e9; --green: #10b981; --amber: #f59e0b; --red: #ef4444;
+  --text: #e2e8f0; --muted: #64748b; color-scheme: dark;
 }
 * { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: 'Inter', system-ui, sans-serif; background: var(--bg); color: var(--text); min-height: 100vh; }
+body {
+  font-family: 'Inter', system-ui, sans-serif;
+  background: var(--base);
+  background-image: radial-gradient(circle at 1px 1px, rgba(0,194,168,0.04) 1px, transparent 0);
+  background-size: 24px 24px;
+  color: var(--text); min-height: 100vh;
+}
 
 nav {
   display: flex; align-items: center; justify-content: space-between;
   padding: 0.85rem max(1.5rem, env(safe-area-inset-left,0px));
-  background: rgba(13,24,41,0.96); border-bottom: 1px solid var(--border);
+  background: rgba(6,12,24,0.96); border-bottom: 1px solid var(--border);
   backdrop-filter: blur(12px); position: sticky; top: 0; z-index: 100;
 }
-.logo { font-weight: 800; font-size: 1.1rem; color: var(--accent); text-decoration: none; }
+.logo {
+  font-family: 'Space Grotesk', sans-serif;
+  font-weight: 700; font-size: 1.1rem; color: var(--teal);
+  text-decoration: none; letter-spacing: 0.06em;
+}
 .logo span { color: var(--text); }
-.nav-links a { color: var(--muted); text-decoration: none; font-size: .85rem; padding: .35rem .75rem; border-radius: 8px; transition: .2s; }
-.nav-links a:hover { background: var(--card); color: var(--text); }
+.nav-links a {
+  color: var(--muted); text-decoration: none; font-size: .78rem;
+  font-family: 'JetBrains Mono', monospace; letter-spacing: 0.04em;
+  padding: .35rem .75rem; border-radius: 2px; transition: .2s;
+}
+.nav-links a:hover { background: var(--panel); color: var(--text); }
 
 .page {
   max-width: 1400px; margin: 0 auto;
@@ -35,59 +49,88 @@ nav {
 /* STEPS */
 .steps { display: flex; gap: .4rem; margin-bottom: 1.2rem; }
 .step {
-  flex: 1; text-align: center; padding: .5rem .4rem; border-radius: 8px;
-  font-size: .73rem; font-weight: 600; background: var(--card);
-  border: 1.5px solid var(--border); color: var(--muted); transition: all .3s;
+  flex: 1; text-align: center; padding: .5rem .4rem;
+  font-size: .65rem; font-weight: 600;
+  font-family: 'JetBrains Mono', monospace; letter-spacing: 0.08em;
+  background: var(--panel); border: 1.5px solid var(--border); color: var(--muted);
+  clip-path: polygon(0 0, calc(100% - 6px) 0, 100% 6px, 100% 100%, 6px 100%, 0 calc(100% - 6px));
+  transition: all .3s;
 }
-.step.active { border-color: var(--accent); color: var(--accent); background: rgba(59,130,246,.08); }
+.step.active { border-color: var(--teal); color: var(--teal); background: rgba(0,194,168,.08); }
 .step.done { border-color: var(--green); color: var(--green); background: rgba(16,185,129,.08); }
 
 /* CARD */
-.card { background: var(--card); border: 1px solid var(--border); border-radius: var(--r); padding: 1.5rem; }
-h2 { font-size: 1.1rem; font-weight: 700; margin-bottom: 1.2rem; }
+.card {
+  background: var(--panel); border: 1px solid var(--border); padding: 1.5rem;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
+}
+h2 {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1.05rem; font-weight: 700; margin-bottom: 1.2rem; letter-spacing: -0.01em;
+}
 .field { margin-bottom: .85rem; }
-label { display: block; font-size: .72rem; font-weight: 600; color: var(--muted); margin-bottom: .3rem; text-transform: uppercase; letter-spacing: .05em; }
+label {
+  display: block; font-size: .65rem; font-weight: 600; color: var(--muted);
+  margin-bottom: .3rem; text-transform: uppercase; letter-spacing: .1em;
+  font-family: 'JetBrains Mono', monospace;
+}
 input {
-  width: 100%; padding: .65rem .9rem; border-radius: 10px;
-  background: var(--bg); border: 1.5px solid var(--border);
+  width: 100%; padding: .65rem .9rem;
+  background: var(--void); border: 1.5px solid var(--border);
   color: var(--text); font-family: 'Inter',sans-serif; font-size: .9rem; transition: border-color .2s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
 }
-input:focus { outline: none; border-color: var(--accent); }
+input:focus { outline: none; border-color: var(--teal); }
 .btn {
-  width: 100%; padding: .8rem; border-radius: 11px; font-weight: 700; font-size: .95rem;
-  cursor: pointer; transition: all .2s; font-family: 'Inter',sans-serif; border: none;
+  width: 100%; padding: .8rem; font-weight: 700; font-size: .78rem;
+  cursor: pointer; transition: all .2s; font-family: 'JetBrains Mono',monospace;
+  border: none; letter-spacing: 0.1em;
+  clip-path: polygon(0 0, calc(100% - 10px) 0, 100% 10px, 100% 100%, 10px 100%, 0 calc(100% - 10px));
 }
-.btn-primary { background: var(--accent); color: #fff; box-shadow: 0 4px 18px rgba(59,130,246,.3); }
-.btn-primary:hover { background: #2563eb; }
+.btn-primary { background: var(--teal); color: var(--void); box-shadow: 0 4px 18px rgba(0,194,168,.2); }
+.btn-primary:hover { background: #00dfc0; }
 .btn-primary:disabled { opacity: .4; cursor: not-allowed; }
 .btn-outline { background: transparent; color: var(--muted); border: 1.5px solid var(--border); }
-.btn-outline:hover { border-color: var(--accent); color: var(--accent); }
+.btn-outline:hover { border-color: var(--teal); color: var(--teal); }
 .btn + .btn { margin-top: .5rem; }
 
-.tip { margin-top: .9rem; padding: .7rem .9rem; background: rgba(14,165,233,.06); border: 1px solid rgba(14,165,233,.12); border-radius: 10px; font-size: .78rem; color: var(--muted); line-height: 1.65; }
-.tip p::before { margin-right: .4rem; }
+.tip {
+  margin-top: .9rem; padding: .7rem .9rem;
+  background: rgba(0,194,168,.04); border: 1px solid rgba(0,194,168,.1);
+  font-size: .72rem; color: var(--muted); line-height: 1.8;
+  font-family: 'JetBrains Mono', monospace;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
+}
 
 /* RESULT SIDE CARD */
 .result-card { display: none; }
 .result-card.show { display: block; }
 .res-icon-big { font-size: 2.75rem; text-align: center; margin-bottom: .6rem; }
-.res-title { font-size: 1rem; font-weight: 700; text-align: center; }
+.res-title {
+  font-family: 'Space Grotesk', sans-serif;
+  font-size: 1rem; font-weight: 700; text-align: center;
+}
 .res-badge {
-  display: block; text-align: center; padding: .3rem 1rem; border-radius: 999px;
-  font-size: .78rem; font-weight: 600; font-family: monospace;
+  display: block; text-align: center; padding: .3rem 1rem;
+  font-size: .68rem; font-weight: 600; font-family: 'JetBrains Mono', monospace;
   margin: .6rem auto; max-width: fit-content;
-  background: rgba(59,130,246,.12); color: var(--accent);
+  background: rgba(0,194,168,.1); color: var(--teal); border: 1px solid rgba(0,194,168,.2);
 }
 .checks { display: grid; grid-template-columns: 1fr 1fr; gap: .35rem; margin-top: .9rem; }
-.check-item { display: flex; align-items: center; gap: .35rem; padding: .38rem .5rem; border-radius: 8px; background: var(--bg); border: 1px solid var(--border); font-size: .7rem; }
+.check-item {
+  display: flex; align-items: center; gap: .35rem; padding: .38rem .5rem;
+  background: var(--void); border: 1px solid var(--border);
+  font-size: .65rem; font-family: 'JetBrains Mono', monospace;
+}
 .dot { width: 7px; height: 7px; border-radius: 50%; flex-shrink: 0; }
 .dot-ok { background: var(--green); }
 .dot-fail { background: var(--red); }
 
 /* ========== CAMERA ========== */
 .cam-wrap {
-  position: relative; width: 100%; border-radius: var(--r); overflow: hidden;
-  background: #03080f; aspect-ratio: 4/3; min-height: 480px;
+  position: relative; width: 100%; overflow: hidden;
+  background: var(--void); aspect-ratio: 4/3; min-height: 480px;
+  clip-path: polygon(0 0, calc(100% - 12px) 0, 100% 12px, 100% 100%, 12px 100%, 0 calc(100% - 12px));
 }
 #video {
   position: absolute; inset: 0; width: 100%; height: 100%;
@@ -97,35 +140,36 @@ input:focus { outline: none; border-color: var(--accent); }
 
 .cam-placeholder {
   position: absolute; inset: 0; display: flex; flex-direction: column;
-  align-items: center; justify-content: center; gap: 1rem; color: var(--muted); background: #03080f;
+  align-items: center; justify-content: center; gap: 1rem; color: var(--muted); background: var(--void);
 }
 .cam-placeholder svg { opacity: .18; }
-.cam-placeholder p { font-size: .85rem; text-align: center; line-height: 1.6; }
+.cam-placeholder p { font-size: .78rem; text-align: center; line-height: 1.6; font-family: 'JetBrains Mono', monospace; }
 .cam-placeholder.hidden { display: none; }
 
 /* Processing + result overlays */
 .overlay-abs {
   position: absolute; inset: 0; display: none;
   flex-direction: column; align-items: center; justify-content: center; gap: .9rem;
-  border-radius: var(--r);
 }
 .overlay-abs.show { display: flex; }
-.overlay-process { background: rgba(7,16,30,.88); backdrop-filter: blur(4px); }
+.overlay-process { background: rgba(3,6,12,.88); backdrop-filter: blur(4px); }
 .overlay-success { background: rgba(16,185,129,.12); border: 2px solid rgba(16,185,129,.35); }
 .overlay-fail    { background: rgba(239,68,68,.12); border: 2px solid rgba(239,68,68,.3); }
 
 @keyframes spin { to { transform: rotate(360deg); } }
-.ring { width: 56px; height: 56px; border: 4px solid rgba(59,130,246,.2); border-top-color: var(--accent); border-radius: 50%; animation: spin .75s linear infinite; }
+.ring { width: 56px; height: 56px; border: 4px solid rgba(0,194,168,.2); border-top-color: var(--teal); border-radius: 50%; animation: spin .75s linear infinite; }
 .ov-icon { font-size: 3.5rem; }
-.ov-name { font-size: 1.1rem; font-weight: 700; color: var(--text); }
-.ov-sub  { font-size: .82rem; color: var(--muted); font-family: monospace; }
+.ov-name { font-size: 1.1rem; font-weight: 700; color: var(--text); font-family: 'Space Grotesk', sans-serif; }
+.ov-sub  { font-size: .78rem; color: var(--muted); font-family: 'JetBrains Mono', monospace; }
 
 /* Status + controls below camera */
 .cam-status {
-  margin-top: .7rem; padding: .6rem 1rem; border-radius: 10px;
-  font-size: .84rem; font-weight: 500; text-align: center;
-  background: rgba(59,130,246,.07); border: 1px solid rgba(59,130,246,.15); color: var(--accent);
+  margin-top: .7rem; padding: .6rem 1rem;
+  font-size: .75rem; font-weight: 500; text-align: center;
+  font-family: 'JetBrains Mono', monospace; letter-spacing: 0.03em;
+  background: rgba(0,194,168,.07); border: 1px solid rgba(0,194,168,.15); color: var(--teal);
   transition: all .3s;
+  clip-path: polygon(0 0, calc(100% - 8px) 0, 100% 8px, 100% 100%, 8px 100%, 0 calc(100% - 8px));
 }
 .cam-status.ok   { background: rgba(16,185,129,.07); border-color: rgba(16,185,129,.2); color: var(--green); }
 .cam-status.warn { background: rgba(245,158,11,.07); border-color: rgba(245,158,11,.2); color: var(--amber); }
@@ -134,11 +178,13 @@ input:focus { outline: none; border-color: var(--accent); }
 .cam-ctrl { display: flex; gap: .6rem; margin-top: .6rem; visibility: hidden; }
 .cam-ctrl.show { visibility: visible; }
 .btn-sm {
-  padding: .6rem .9rem; border-radius: 10px; font-weight: 600; font-size: .82rem;
-  cursor: pointer; border: none; font-family: 'Inter',sans-serif; transition: all .2s;
+  padding: .6rem .9rem; font-weight: 600; font-size: .72rem;
+  cursor: pointer; border: none; font-family: 'JetBrains Mono',monospace;
+  transition: all .2s; letter-spacing: 0.08em;
+  clip-path: polygon(0 0, calc(100% - 7px) 0, 100% 7px, 100% 100%, 7px 100%, 0 calc(100% - 7px));
 }
-.btn-sm-p { background: var(--accent); color: #fff; flex: 2; }
-.btn-sm-p:hover { background: #2563eb; }
+.btn-sm-p { background: var(--teal); color: var(--void); flex: 2; }
+.btn-sm-p:hover { background: #00dfc0; }
 .btn-sm-o { background: transparent; color: var(--muted); border: 1.5px solid var(--border); flex: 1; }
 .btn-sm-o:hover { border-color: var(--red); color: var(--red); }
 
@@ -148,10 +194,12 @@ input:focus { outline: none; border-color: var(--accent); }
 <body>
 
 <nav>
-  <a href="/" class="logo">Face<span>Verify</span></a>
+  <a href="/" class="logo"><span>FACE</span>VERIFY</a>
   <div class="nav-links">
     <a href="/verify.html">Verifikasi</a>
+    <a href="/presensi.html">Presensi</a>
     <a href="/admin.html">Admin</a>
+    <a href="/docs-integrasi.html">Integrasi</a>
   </div>
 </nav>
 
@@ -160,9 +208,9 @@ input:focus { outline: none; border-color: var(--accent); }
   <!-- ===== LEFT PANEL ===== -->
   <div>
     <div class="steps">
-      <div class="step active" id="step1">1 · Data</div>
-      <div class="step" id="step2">2 · Kamera</div>
-      <div class="step" id="step3">3 · Selesai</div>
+      <div class="step active" id="step1">01 / DATA</div>
+      <div class="step" id="step2">02 / KAMERA</div>
+      <div class="step" id="step3">03 / SELESAI</div>
     </div>
 
     <div class="card" id="formCard">
@@ -171,21 +219,21 @@ input:focus { outline: none; border-color: var(--accent); }
       <div class="field"><label>Nama Lengkap *</label><input id="fullName" placeholder="Nama sesuai identitas"></div>
       <div class="field"><label>Email</label><input id="email" type="email" placeholder="email@contoh.com"></div>
       <div class="field"><label>Nomor HP</label><input id="phone" type="tel" placeholder="08xxxxxxxxxx"></div>
-      <button class="btn btn-primary" id="btnStartCam">📷  Buka Kamera &amp; Daftar</button>
+      <button class="btn btn-primary" id="btnStartCam">BUKA KAMERA &amp; DAFTAR</button>
       <div class="tip">
-        <p>💡 Pastikan wajah tampak jelas dan terang</p>
-        <p>🚫 Jangan gunakan foto atau layar lain</p>
-        <p>👁 Lepas kacamata hitam jika perlu</p>
+        <p>→ Pastikan wajah tampak jelas dan terang</p>
+        <p>→ Jangan gunakan foto atau layar lain</p>
+        <p>→ Lepas kacamata hitam jika perlu</p>
       </div>
     </div>
 
     <div class="card result-card" id="resultCard">
       <div class="res-icon-big" id="rcIcon">✅</div>
-      <div class="res-title" id="rcTitle">Wajah Berhasil Didaftarkan!</div>
+      <div class="res-title" id="rcTitle">Wajah Berhasil Didaftarkan</div>
       <div class="res-badge" id="rcBadge"></div>
       <div id="rcChecks" class="checks"></div>
-      <button class="btn btn-outline" onclick="resetAll()" style="margin-top:1rem">+ Daftarkan Lainnya</button>
-      <button class="btn btn-primary" onclick="location.href='/verify.html'">🔍 Verifikasi Sekarang</button>
+      <button class="btn btn-outline" onclick="resetAll()" style="margin-top:1rem">DAFTAR LAINNYA</button>
+      <button class="btn btn-primary" onclick="location.href='/verify.html'">VERIFIKASI SEKARANG</button>
     </div>
   </div>
 
@@ -202,20 +250,16 @@ input:focus { outline: none; border-color: var(--accent); }
 
       <video id="video" autoplay muted playsinline></video>
 
-      <!-- SVG overlay: vignette + oval guide + progress arc + labels -->
       <svg id="camSvg" class="cam-svg" viewBox="0 0 400 300" preserveAspectRatio="xMidYMid slice">
         <defs>
           <mask id="vm">
             <rect width="400" height="300" fill="white"/>
-            <!-- oval cutout — matches the guide oval -->
             <ellipse cx="200" cy="142" rx="118" ry="138" fill="black"/>
           </mask>
         </defs>
 
-        <!-- Dark vignette around oval -->
         <rect width="400" height="300" fill="rgba(0,0,0,0.52)" mask="url(#vm)"/>
 
-        <!-- Corner bracket decorations -->
         <g id="corners" stroke="#475569" stroke-width="2.5" stroke-linecap="round" fill="none">
           <path d="M78 2 L78 14 L90 14"/>
           <path d="M310 2 L310 14 L322 14"/>
@@ -223,39 +267,33 @@ input:focus { outline: none; border-color: var(--accent); }
           <path d="M310 282 L310 270 L322 270"/>
         </g>
 
-        <!-- Oval guide border -->
         <ellipse id="ovalBorder" cx="200" cy="142" rx="118" ry="138"
           fill="none" stroke="#475569" stroke-width="2.5"/>
 
-        <!-- Progress arc (pathLength trick) — hidden until HOLDING -->
         <ellipse id="arcEl" cx="200" cy="142" rx="118" ry="138"
-          fill="none" stroke="#10b981" stroke-width="5" stroke-linecap="round"
+          fill="none" stroke="#00C2A8" stroke-width="5" stroke-linecap="round"
           pathLength="100" stroke-dasharray="100" stroke-dashoffset="100"
           transform="rotate(-90 200 142)" style="display:none"/>
 
-        <!-- Label pill at bottom of oval -->
-        <rect id="lblBg" x="130" y="263" width="140" height="24" rx="12" fill="rgba(0,0,0,0.65)"/>
+        <rect id="lblBg" x="130" y="263" width="140" height="24" rx="2" fill="rgba(0,0,0,0.75)"/>
         <text id="lblTxt" x="200" y="279" text-anchor="middle"
-          font-family="Inter,system-ui,sans-serif" font-size="10.5" font-weight="600" fill="#94a3b8">
+          font-family="JetBrains Mono,monospace" font-size="10" font-weight="600" fill="#94a3b8">
           Posisikan wajah dalam oval
         </text>
 
-        <!-- Scan line animation (visible during SCANNING) -->
         <line id="scanLine" x1="82" x2="318" y1="142" y2="142"
-          stroke="rgba(59,130,246,0.5)" stroke-width="1.5"
+          stroke="rgba(0,194,168,0.4)" stroke-width="1.5"
           style="display:none">
           <animateTransform attributeName="transform" type="translate" from="0,-130" to="0,130"
             dur="1.8s" repeatCount="indefinite"/>
         </line>
       </svg>
 
-      <!-- Processing overlay -->
       <div class="overlay-abs overlay-process" id="ovProcess">
         <div class="ring"></div>
-        <div style="color:var(--text);font-weight:600;font-size:.9rem">Mendaftarkan wajah…</div>
+        <div style="color:var(--text);font-weight:600;font-size:.85rem;font-family:'JetBrains Mono',monospace;letter-spacing:.05em">Mendaftarkan wajah…</div>
       </div>
 
-      <!-- Result overlay on camera -->
       <div class="overlay-abs" id="ovResult">
         <div class="ov-icon" id="ovIcon">✅</div>
         <div class="ov-name" id="ovName"></div>
@@ -267,8 +305,8 @@ input:focus { outline: none; border-color: var(--accent); }
     <div class="cam-status" id="camStatus">Isi data di sebelah kiri terlebih dahulu</div>
 
     <div class="cam-ctrl" id="camCtrl">
-      <button class="btn-sm btn-sm-p" id="btnManual">📸 Ambil Manual</button>
-      <button class="btn-sm btn-sm-o" id="btnCancel">Batal</button>
+      <button class="btn-sm btn-sm-p" id="btnManual">AMBIL MANUAL</button>
+      <button class="btn-sm btn-sm-o" id="btnCancel">BATAL</button>
     </div>
 
     <canvas id="capCanvas" style="display:none" width="1280" height="720"></canvas>
